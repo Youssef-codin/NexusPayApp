@@ -9,13 +9,6 @@ export function useWallet() {
   })
 }
 
-export function useTransactions() {
-  return useQuery({
-    queryKey: [...queryKeys.wallet.all, "transactions"],
-    queryFn: () => walletApi.getTransactions(),
-  })
-}
-
 export function useTopUp() {
   const queryClient = useQueryClient()
 

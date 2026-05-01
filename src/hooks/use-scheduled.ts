@@ -5,31 +5,9 @@ import { queryKeys } from "#/lib/query-keys"
 export function useScheduledTransfers() {
   return useQuery({
     queryKey: queryKeys.scheduled.list(),
-    queryFn: () => scheduledApi.getScheduled(),
-  })
-}
-
-export function useScheduledTransfer(id: string) {
-  return useQuery({
-    queryKey: queryKeys.scheduled.detail(id),
-    queryFn: () => scheduledApi.getScheduledTransfer(id),
-    enabled: !!id,
-  })
-}
-
-export function useCreateScheduled() {
-  const queryClient = useQueryClient()
-
-  return useMutation({
-    mutationFn: (data: {
-      recipientId: string
-      recipientName: string
-      amount: number
-      note?: string
-      scheduledAt: string
-    }) => scheduledApi.createScheduled(data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.scheduled.list() })
+    queryFn: async () => {
+      const response = await scheduledApi.getScheduled()
+      return response.scheduled_transfers
     },
   })
 }

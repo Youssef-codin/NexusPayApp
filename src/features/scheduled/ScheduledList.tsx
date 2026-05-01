@@ -1,11 +1,13 @@
 import { Link } from "@tanstack/react-router"
-import { useScheduledTransfers } from "#/hooks/use-scheduled"
-import { formatCurrency, formatDateTime } from "#/lib/formatters"
+import { useScheduledTransfers, useCancelScheduled } from "#/hooks/use-scheduled"
+import { formatDateTime } from "#/lib/formatters"
 import { Card, CardContent, CardHeader, CardTitle } from "#/components/ui/card"
 import { ListSkeleton } from "#/components/LoadingSpinner"
+import { Button } from "#/components/ui/button"
 
 export function ScheduledList() {
   const { data: scheduled, isLoading, error } = useScheduledTransfers()
+  const cancelScheduled = useCancelScheduled()
 
   if (isLoading) {
     return <ListSkeleton />
@@ -43,42 +45,40 @@ export function ScheduledList() {
       <CardContent className="pt-4">
         <div className="space-y-3">
           {scheduled.map((item) => (
-            <Link
+            <div
               key={item.id}
-              to="/scheduled/$scheduledId"
-              params={{ scheduledId: item.id }}
-              className="block border-2 border-black p-4 hover:bg-[#00ff87]/20 transition-colors"
+              className="border-2 border-black p-4"
             >
               <div className="flex justify-between items-start">
                 <div>
-                  <p className="font-bold text-black">{item.recipientName}</p>
+                  <p className="font-bold text-black">ID: {item.id.slice(0, 8)}...</p>
                   <p className="text-sm text-neutral-600 font-medium">
-                    Scheduled: {formatDateTime(item.scheduledAt)}
+                    Transfer ID: {item.transfer_id.slice(0, 8)}...
                   </p>
                   <p className="text-sm text-neutral-500 font-medium">
-                    {item.note || "No note"}
+                    Scheduled: {formatDateTime(item.scheduled_at)}
+                  </p>
+                  <p className="text-sm text-neutral-500 font-medium">
+                    Created: {formatDateTime(item.created_at)}
                   </p>
                 </div>
                 <div className="text-right">
-                  <p className="font-bold text-black">
-                    {formatCurrency(item.amount)}
-                  </p>
-                  <span
-                    className={`inline-block text-xs font-bold uppercase tracking-wider px-2 py-1 ${
-                      item.status === "pending"
-                        ? "bg-yellow-400 text-black"
-                        : item.status === "completed"
-                        ? "bg-[#00ff87] text-black"
-                        : item.status === "cancelled"
-                        ? "bg-neutral-400 text-black"
-                        : "bg-red-600 text-white"
-                    }`}
-                  >
-                    {item.status}
-                  </span>
+                  {item.executed_at ? (
+                    <span className="inline-block text-xs font-bold uppercase tracking-wider px-2 py-1 bg-[#00ff87] text-black">
+                      Executed
+                    </span>
+                  ) : (
+                    <Button
+                      onClick={() => cancelScheduled.mutate(item.id)}
+                      disabled={cancelScheduled.isPending}
+                      className="text-xs bg-red-600 text-white hover:bg-red-700 border border-black font-bold uppercase tracking-wider"
+                    >
+                      {cancelScheduled.isPending ? "Cancelling..." : "Cancel"}
+                    </Button>
+                  )}
                 </div>
               </div>
-            </Link>
+            </div>
           ))}
         </div>
       </CardContent>

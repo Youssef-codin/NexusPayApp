@@ -1,11 +1,16 @@
 import api from "./axios"
 import type {
   AuthResponse,
+  RefreshResponse,
   User,
   Wallet,
+  TopUpResponse,
   Transfer,
+  TransferListResponse,
+  TransferDetailResponse,
   ScheduledTransfer,
-  Transaction,
+  ScheduledTransferListResponse,
+  UserSearchResult,
 } from "#/types"
 
 export const client = {
@@ -26,59 +31,47 @@ export const authApi = {
   login: (email: string, password: string) =>
     client.post<AuthResponse>("/auth/login", { email, password }),
 
-  register: (data: {
-    email: string
-    password: string
-    firstName: string
-    lastName: string
-    phone?: string
-  }) => client.post<AuthResponse>("/auth/register", data),
-
-  me: () => client.get<User>("/auth/me"),
+  register: (data: { email: string; password: string; full_name: string }) =>
+    client.post<AuthResponse>("/auth/register", data),
 
   refresh: (refreshToken: string) =>
-    client.post<{ accessToken: string; refreshToken: string }>(
-      "/auth/refresh",
-      { refreshToken }
-    ),
+    client.post<RefreshResponse>("/auth/refresh", { refresh_token: refreshToken }),
+
+  logout: () => client.post<void>("/users/logout"),
+
+  test: () => client.get<User>("/users/test"),
 }
 
 export const walletApi = {
-  getWallet: () => client.get<Wallet>("/wallet"),
-
-  getTransactions: () => client.get<Transaction[]>("/wallet/transactions"),
+  getWallet: () => client.get<Wallet>("/wallet/"),
 
   topUp: (amount: number) =>
-    client.post<Wallet>("/wallet/top-up", { amount }),
+    client.patch<TopUpResponse>("/wallet/", { amount }),
 }
 
 export const transferApi = {
-  getTransfers: () => client.get<Transfer[]>("/transfers"),
+  getTransfers: () => client.get<TransferListResponse>("/transfers/"),
 
-  getTransfer: (id: string) => client.get<Transfer>(`/transfers/${id}`),
+  getTransfer: (id: string) =>
+    client.get<TransferDetailResponse>(`/transfers/${id}`),
 
   sendMoney: (data: {
-    recipientId: string
-    recipientName: string
-    amount: number
+    to_wallet_id: string
+    amount_in_piastres: number
     note?: string
-  }) => client.post<Transfer>("/transfers", data),
+    scheduled_at?: string
+  }) => client.post<Transfer>("/transfers/", data),
 }
 
 export const scheduledApi = {
-  getScheduled: () => client.get<ScheduledTransfer[]>("/scheduled"),
-
-  getScheduledTransfer: (id: string) =>
-    client.get<ScheduledTransfer>(`/scheduled/${id}`),
-
-  createScheduled: (data: {
-    recipientId: string
-    recipientName: string
-    amount: number
-    note?: string
-    scheduledAt: string
-  }) => client.post<ScheduledTransfer>("/scheduled", data),
+  getScheduled: () =>
+    client.get<ScheduledTransferListResponse>("/transfers/scheduled/"),
 
   cancelScheduled: (id: string) =>
-    client.patch<ScheduledTransfer>(`/scheduled/${id}/cancel`),
+    client.delete<{ cancelled_id: string }>(`/transfers/scheduled/${id}`),
+}
+
+export const userApi = {
+  search: (name: string) =>
+    client.get<UserSearchResult[]>("/users", { params: { name } }),
 }

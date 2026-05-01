@@ -24,9 +24,7 @@ export function RegisterForm() {
       await register.mutateAsync({
         email: data.email,
         password: data.password,
-        firstName: data.firstName,
-        lastName: data.lastName,
-        phone: data.phone,
+        full_name: data.full_name,
       })
       navigate({ to: "/dashboard" })
     } catch {
@@ -41,37 +39,20 @@ export function RegisterForm() {
       </CardHeader>
       <CardContent className="pt-6">
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-bold text-black mb-2 uppercase tracking-wider">
-                First Name
-              </label>
-              <Input
-                {...registerField("firstName")}
-                className="border-2 border-black focus:border-4 focus:border-black focus:shadow-[4px_4px_0px_#00ff87]"
-                placeholder="John"
-              />
-              {errors.firstName && (
-                <p className="text-red-600 text-sm mt-1 font-medium">
-                  {errors.firstName.message}
-                </p>
-              )}
-            </div>
-            <div>
-              <label className="block text-sm font-bold text-black mb-2 uppercase tracking-wider">
-                Last Name
-              </label>
-              <Input
-                {...registerField("lastName")}
-                className="border-2 border-black focus:border-4 focus:border-black focus:shadow-[4px_4px_0px_#00ff87]"
-                placeholder="Doe"
-              />
-              {errors.lastName && (
-                <p className="text-red-600 text-sm mt-1 font-medium">
-                  {errors.lastName.message}
-                </p>
-              )}
-            </div>
+          <div>
+            <label className="block text-sm font-bold text-black mb-2 uppercase tracking-wider">
+              Full Name
+            </label>
+            <Input
+              {...registerField("full_name")}
+              className="border-2 border-black focus:border-4 focus:border-black focus:shadow-[4px_4px_0px_#00ff87]"
+              placeholder="John Doe"
+            />
+            {errors.full_name && (
+              <p className="text-red-600 text-sm mt-1 font-medium">
+                {errors.full_name.message}
+              </p>
+            )}
           </div>
           <div>
             <label className="block text-sm font-bold text-black mb-2 uppercase tracking-wider">
@@ -88,17 +69,6 @@ export function RegisterForm() {
                 {errors.email.message}
               </p>
             )}
-          </div>
-          <div>
-            <label className="block text-sm font-bold text-black mb-2 uppercase tracking-wider">
-              Phone (Optional)
-            </label>
-            <Input
-              {...registerField("phone")}
-              type="tel"
-              className="border-2 border-black focus:border-4 focus:border-black focus:shadow-[4px_4px_0px_#00ff87]"
-              placeholder="+20 100 000 0000"
-            />
           </div>
           <div>
             <label className="block text-sm font-bold text-black mb-2 uppercase tracking-wider">

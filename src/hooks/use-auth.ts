@@ -10,7 +10,12 @@ export function useLogin() {
     mutationFn: ({ email, password }: { email: string; password: string }) =>
       authApi.login(email, password),
     onSuccess: (data) => {
-      login(data.accessToken, data.refreshToken, data.user)
+      const user = {
+        id: "",
+        email: data.email,
+        full_name: data.full_name,
+      }
+      login(data.jwt_token, data.refresh_token, user)
     },
   })
 }
@@ -19,15 +24,15 @@ export function useRegister() {
   const login = useAuthStore.getState().login
 
   return useMutation({
-    mutationFn: (data: {
-      email: string
-      password: string
-      firstName: string
-      lastName: string
-      phone?: string
-    }) => authApi.register(data),
+    mutationFn: (data: { email: string; password: string; full_name: string }) =>
+      authApi.register(data),
     onSuccess: (data) => {
-      login(data.accessToken, data.refreshToken, data.user)
+      const user = {
+        id: "",
+        email: data.email,
+        full_name: data.full_name,
+      }
+      login(data.jwt_token, data.refresh_token, user)
     },
   })
 }
@@ -37,7 +42,7 @@ export function useUser() {
 
   return useQuery({
     queryKey: queryKeys.auth.user(),
-    queryFn: () => authApi.me(),
+    queryFn: () => authApi.test(),
     enabled: !!useAuthStore.getState().accessToken,
     staleTime: 1000 * 60 * 5,
     onSuccess: (user) => setUser(user),

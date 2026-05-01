@@ -37,15 +37,15 @@ export function TransferDetail({ transferId }: TransferDetailProps) {
             Amount
           </span>
           <span className="text-3xl font-bold text-black">
-            {formatCurrency(transfer.amount)}
+            {formatCurrency(transfer.amount_in_piastres)}
           </span>
         </div>
         <div className="grid grid-cols-2 gap-4">
           <div>
             <p className="text-sm text-neutral-600 font-medium uppercase tracking-wider">
-              Recipient
+              To Wallet
             </p>
-            <p className="font-bold text-black">{transfer.recipientName}</p>
+            <p className="font-bold text-black">{transfer.to_wallet_id}</p>
           </div>
           <div>
             <p className="text-sm text-neutral-600 font-medium uppercase tracking-wider">
@@ -68,21 +68,11 @@ export function TransferDetail({ transferId }: TransferDetailProps) {
               Created
             </p>
             <p className="font-bold text-black">
-              {formatDateTime(transfer.createdAt)}
+              {formatDateTime(transfer.created_at)}
             </p>
           </div>
-          {transfer.completedAt && (
-            <div>
-              <p className="text-sm text-neutral-600 font-medium uppercase tracking-wider">
-                Completed
-              </p>
-              <p className="font-bold text-black">
-                {formatDateTime(transfer.completedAt)}
-              </p>
-            </div>
-          )}
           {transfer.note && (
-            <div className="col-span-2">
+            <div>
               <p className="text-sm text-neutral-600 font-medium uppercase tracking-wider">
                 Note
               </p>

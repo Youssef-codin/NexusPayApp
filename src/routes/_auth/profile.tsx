@@ -1,6 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router"
 import { useAuthStore } from "#/store/auth-store"
-import { formatDate } from "#/lib/formatters"
 import { Card, CardContent, CardHeader, CardTitle } from "#/components/ui/card"
 
 export const Route = createFileRoute("/_auth/profile")({
@@ -36,35 +35,15 @@ function Profile() {
           <div className="grid grid-cols-2 gap-4">
             <div>
               <p className="text-sm text-neutral-600 font-medium uppercase tracking-wider">
-                First Name
+                Full Name
               </p>
-              <p className="font-bold text-black">{user.firstName}</p>
-            </div>
-            <div>
-              <p className="text-sm text-neutral-600 font-medium uppercase tracking-wider">
-                Last Name
-              </p>
-              <p className="font-bold text-black">{user.lastName}</p>
+              <p className="font-bold text-black">{user.full_name}</p>
             </div>
             <div>
               <p className="text-sm text-neutral-600 font-medium uppercase tracking-wider">
                 Email
               </p>
               <p className="font-bold text-black">{user.email}</p>
-            </div>
-            {user.phone && (
-              <div>
-                <p className="text-sm text-neutral-600 font-medium uppercase tracking-wider">
-                  Phone
-                </p>
-                <p className="font-bold text-black">{user.phone}</p>
-              </div>
-            )}
-            <div>
-              <p className="text-sm text-neutral-600 font-medium uppercase tracking-wider">
-                Member Since
-              </p>
-              <p className="font-bold text-black">{formatDate(user.createdAt)}</p>
             </div>
           </div>
         </CardContent>

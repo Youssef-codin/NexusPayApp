@@ -1,18 +1,25 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { transferApi } from "#/api/client"
 import { queryKeys } from "#/lib/query-keys"
+import type { Transfer } from "#/types"
 
 export function useTransfers() {
   return useQuery({
     queryKey: queryKeys.transfers.list(),
-    queryFn: () => transferApi.getTransfers(),
+    queryFn: async () => {
+      const response = await transferApi.getTransfers()
+      return response.transfers
+    },
   })
 }
 
 export function useTransfer(id: string) {
   return useQuery({
     queryKey: queryKeys.transfers.detail(id),
-    queryFn: () => transferApi.getTransfer(id),
+    queryFn: async () => {
+      const response = await transferApi.getTransfer(id)
+      return response.transfer
+    },
     enabled: !!id,
   })
 }
@@ -22,10 +29,10 @@ export function useSendMoney() {
 
   return useMutation({
     mutationFn: (data: {
-      recipientId: string
-      recipientName: string
-      amount: number
+      to_wallet_id: string
+      amount_in_piastres: number
       note?: string
+      scheduled_at?: string
     }) => transferApi.sendMoney(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.transfers.list() })

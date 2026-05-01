@@ -1,64 +1,73 @@
 export interface User {
   id: string
   email: string
-  firstName: string
-  lastName: string
-  phone?: string
-  createdAt: string
-  updatedAt: string
+  full_name: string
 }
 
 export interface Wallet {
   id: string
-  userId: string
+  user_id: string
   balance: number
-  currency: string
-  createdAt: string
-  updatedAt: string
-}
-
-export interface Transaction {
-  id: string
-  walletId: string
-  type: "credit" | "debit"
-  amount: number
-  description?: string
-  reference?: string
-  createdAt: string
+  created_at: string
 }
 
 export interface Transfer {
   id: string
-  senderId: string
-  recipientId: string
-  recipientName: string
-  amount: number
+  from_wallet_id: string
+  to_wallet_id: string
+  amount_in_piastres: number
+  status: "completed" | "pending" | "failed"
   note?: string
-  status: "pending" | "completed" | "failed"
-  createdAt: string
-  completedAt?: string
+  created_at: string
+}
+
+export interface TransferListResponse {
+  from_wallet_id: string
+  transfers: Transfer[]
+}
+
+export interface TransferDetailResponse {
+  transfer: Transfer
 }
 
 export interface ScheduledTransfer {
   id: string
-  senderId: string
-  recipientId: string
-  recipientName: string
-  amount: number
-  note?: string
-  scheduledAt: string
-  status: "pending" | "completed" | "cancelled" | "failed"
-  createdAt: string
-  executedAt?: string
+  transfer_id: string
+  scheduled_at: string
+  executed_at: string | null
+  created_at: string
+}
+
+export interface ScheduledTransferListResponse {
+  scheduled_transfers: ScheduledTransfer[]
 }
 
 export interface AuthResponse {
-  accessToken: string
-  refreshToken: string
-  user: User
+  email: string
+  full_name: string
+  jwt_token: string
+  refresh_token: string
+}
+
+export interface RefreshResponse {
+  jwt_token: string
+  refresh_token: string
+}
+
+export interface TopUpResponse {
+  client_secret: string
+  amount: number
+  currency: string
+}
+
+export interface UserSearchResult {
+  id: string
+  email: string
+  full_name: string
 }
 
 export interface ApiError {
+  error: string
   message: string
-  code?: string
+  status_code: number
 }

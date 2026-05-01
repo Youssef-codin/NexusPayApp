@@ -1,7 +1,7 @@
 import { useWallet } from "#/hooks/use-wallet"
 import { formatCurrency } from "#/lib/formatters"
 import { Card, CardContent, CardHeader, CardTitle } from "#/components/ui/card"
-import { LoadingSpinner, CardSkeleton } from "#/components/LoadingSpinner"
+import { CardSkeleton } from "#/components/LoadingSpinner"
 
 export function BalanceDisplay() {
   const { data: wallet, isLoading, error } = useWallet()
@@ -32,7 +32,7 @@ export function BalanceDisplay() {
           {formatCurrency(wallet.balance)}
         </p>
         <p className="text-sm text-neutral-600 mt-2 font-medium">
-          Currency: {wallet.currency}
+          EGP
         </p>
       </CardContent>
     </Card>

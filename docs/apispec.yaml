@@ -1,0 +1,1446 @@
+opencollection: 1.0.0
+info:
+  name: "NexusPay API "
+config:
+  proxy:
+    inherit: true
+    config:
+      protocol: http
+      hostname: ""
+      port: ""
+      auth:
+        username: ""
+        password: ""
+      bypassProxy: ""
+  environments:
+    - name: Development server
+      variables:
+        - name: baseUrl
+          value: http://localhost:3000
+        - name: token
+          secret: true
+    - name: Production server
+      variables:
+        - name: baseUrl
+          value: api.nexuspay.com
+items:
+  - info:
+      name: Authentication
+      type: folder
+      seq: 1
+    request:
+      auth: inherit
+    items:
+      - info:
+          name: Login user
+          type: http
+          seq: 2
+          tags:
+            - Authentication
+        http:
+          method: POST
+          url: "{{baseUrl}}/auth/login"
+          body:
+            type: json
+            data: |-
+              {
+                "email": "john@gmail.com",
+                "password": "password"
+              }
+          auth: inherit
+        runtime:
+          scripts:
+            - type: after-response
+              code: |-
+                const body = res.getBody();
+                bru.setEnvVar("token", body.jwt_token);
+        settings:
+          encodeUrl: true
+          timeout: 0
+          followRedirects: true
+          maxRedirects: 5
+        examples:
+          - name: 200 Response
+            description: Login successful
+            request:
+              url: "{{baseUrl}}/auth/login"
+              method: POST
+              body:
+                type: json
+                data: |-
+                  {
+                    "email": "john.doe@example.com",
+                    "password": "SecurePassword123!"
+                  }
+            response:
+              status: 200
+              statusText: OK
+              headers:
+                - name: Content-Type
+                  value: application/json
+              body:
+                type: json
+                data: |-
+                  {
+                    "email": "john.doe@example.com",
+                    "full_name": "John Doe",
+                    "jwt_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+                    "refresh_token": "dGhpcyBpcyBhIHJlZnJlc2ggdG9rZW4..."
+                  }
+          - name: 401 Response
+            description: Unauthorized - invalid credentials
+            request:
+              url: "{{baseUrl}}/auth/login"
+              method: POST
+              body:
+                type: json
+                data: |-
+                  {
+                    "email": "john.doe@example.com",
+                    "password": "SecurePassword123!"
+                  }
+            response:
+              status: 401
+              statusText: Unauthorized
+              headers:
+                - name: Content-Type
+                  value: application/json
+              body:
+                type: json
+                data: |-
+                  {
+                    "error": "invalid credentials",
+                    "message": "The provided credentials are incorrect",
+                    "status_code": 401
+                  }
+          - name: 404 Response
+            description: Not found - user not found
+            request:
+              url: "{{baseUrl}}/auth/login"
+              method: POST
+              body:
+                type: json
+                data: |-
+                  {
+                    "email": "john.doe@example.com",
+                    "password": "SecurePassword123!"
+                  }
+            response:
+              status: 404
+              statusText: Not Found
+              headers:
+                - name: Content-Type
+                  value: application/json
+              body:
+                type: json
+                data: |-
+                  {
+                    "error": "user not found",
+                    "message": "No user found with this email",
+                    "status_code": 404
+                  }
+      - info:
+          name: Logout user
+          type: http
+          seq: 5
+          tags:
+            - Authentication
+        http:
+          method: POST
+          url: "{{baseUrl}}/users/logout"
+          auth:
+            type: bearer
+            token: "{{token}}"
+        runtime:
+          variables:
+            - name: token
+              value: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NzMxMjMyMTgsImlhdCI6MTc3MzEyMjMxOCwic3ViIjoiODQ3NjcwN2QtNzNmNS00MmE0LWE3NTktOGY2NGRjODgxYzU0In0.TgllRUehkrBJkUTeLZKvb_UNLf3ziclN0oZDWGVsozY
+        settings:
+          encodeUrl: true
+          timeout: 0
+          followRedirects: true
+          maxRedirects: 5
+        examples:
+          - name: 204 Response
+            description: Logout successful
+            request:
+              url: "{{baseUrl}}/users/logout"
+              method: POST
+            response:
+              status: 204
+              statusText: No Content
+          - name: 401 Response
+            description: Unauthorized - missing or invalid token
+            request:
+              url: "{{baseUrl}}/users/logout"
+              method: POST
+            response:
+              status: 401
+              statusText: Unauthorized
+              headers:
+                - name: Content-Type
+                  value: application/json
+              body:
+                type: json
+                data: |-
+                  {
+                    "error": "unauthorized",
+                    "message": "Missing or invalid authorization token",
+                    "status_code": 401
+                  }
+      - info:
+          name: Refresh access token
+          type: http
+          seq: 3
+          tags:
+            - Authentication
+        http:
+          method: POST
+          url: "{{baseUrl}}/auth/refresh"
+          body:
+            type: json
+            data: |-
+              {
+                "refresh_token": "8dc954202a3dd5ef04432c9e5e636cd8cf9059fd6a50d31d2bf9c633930f9a8a"
+              }
+          auth: inherit
+        settings:
+          encodeUrl: true
+          timeout: 0
+          followRedirects: true
+          maxRedirects: 5
+        examples:
+          - name: 200 Response
+            description: Token refreshed successfully
+            request:
+              url: "{{baseUrl}}/auth/refresh"
+              method: POST
+              body:
+                type: json
+                data: |-
+                  {
+                    "refresh_token": "dGhpcyBpcyBhIHJlZnJlc2ggdG9rZW4..."
+                  }
+            response:
+              status: 200
+              statusText: OK
+              headers:
+                - name: Content-Type
+                  value: application/json
+              body:
+                type: json
+                data: |-
+                  {
+                    "jwt_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+                    "refresh_token": "bmV3IHJlZnJlc2ggdG9rZW4..."
+                  }
+          - name: 404 Response
+            description: Not found - invalid or expired refresh token
+            request:
+              url: "{{baseUrl}}/auth/refresh"
+              method: POST
+              body:
+                type: json
+                data: |-
+                  {
+                    "refresh_token": "dGhpcyBpcyBhIHJlZnJlc2ggdG9rZW4..."
+                  }
+            response:
+              status: 404
+              statusText: Not Found
+              headers:
+                - name: Content-Type
+                  value: application/json
+              body:
+                type: json
+                data: |-
+                  {
+                    "error": "User not found",
+                    "message": "Invalid or expired refresh token",
+                    "status_code": 404
+                  }
+      - info:
+          name: Register a new user
+          type: http
+          seq: 1
+          tags:
+            - Authentication
+        http:
+          method: POST
+          url: "{{baseUrl}}/auth/register"
+          body:
+            type: json
+            data: |-
+              {
+                "email": "john@gmail.com",
+                "password": "password",
+                "full_name": "John Doe"
+              }
+          auth: inherit
+        runtime:
+          variables:
+            - name: baseUrl
+              value: http://localhost:3000
+        settings:
+          encodeUrl: true
+          timeout: 0
+          followRedirects: true
+          maxRedirects: 5
+        examples:
+          - name: 201 Response
+            description: User successfully registered
+            request:
+              url: "{{baseUrl}}/auth/register"
+              method: POST
+              body:
+                type: json
+                data: |-
+                  {
+                    "email": "john.doe@example.com",
+                    "password": "SecurePassword123!",
+                    "full_name": "John Doe"
+                  }
+            response:
+              status: 201
+              statusText: Created
+              headers:
+                - name: Content-Type
+                  value: application/json
+              body:
+                type: json
+                data: |-
+                  {
+                    "email": "john.doe@example.com",
+                    "full_name": "John Doe",
+                    "jwt_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+                    "refresh_token": "dGhpcyBpcyBhIHJlZnJlc2ggdG9rZW4..."
+                  }
+          - name: 400 Response
+            description: Bad request - invalid input
+            request:
+              url: "{{baseUrl}}/auth/register"
+              method: POST
+              body:
+                type: json
+                data: |-
+                  {
+                    "email": "john.doe@example.com",
+                    "password": "SecurePassword123!",
+                    "full_name": "John Doe"
+                  }
+            response:
+              status: 400
+              statusText: Bad Request
+              headers:
+                - name: Content-Type
+                  value: application/json
+              body:
+                type: json
+                data: |-
+                  {
+                    "error": "Invalid input",
+                    "message": "Email is required and must be valid",
+                    "status_code": 400
+                  }
+          - name: 409 Response
+            description: Conflict - user already exists
+            request:
+              url: "{{baseUrl}}/auth/register"
+              method: POST
+              body:
+                type: json
+                data: |-
+                  {
+                    "email": "john.doe@example.com",
+                    "password": "SecurePassword123!",
+                    "full_name": "John Doe"
+                  }
+            response:
+              status: 409
+              statusText: Conflict
+              headers:
+                - name: Content-Type
+                  value: application/json
+              body:
+                type: json
+                data: |-
+                  {
+                    "error": "User already exists",
+                    "message": "A user with this email already exists",
+                    "status_code": 409
+                  }
+      - info:
+          name: Test authentication
+          type: http
+          seq: 4
+          tags:
+            - Authentication
+        http:
+          method: GET
+          url: "{{baseUrl}}/users/test"
+          auth:
+            type: bearer
+            token: "{{token}}"
+        settings:
+          encodeUrl: true
+          timeout: 0
+          followRedirects: true
+          maxRedirects: 5
+        examples:
+          - name: 200 Response
+            description: Authentication successful, returns token claims
+            request:
+              url: "{{baseUrl}}/users/test"
+              method: GET
+            response:
+              status: 200
+              statusText: OK
+              headers:
+                - name: Content-Type
+                  value: application/json
+              body:
+                type: json
+                data: |-
+                  {
+                    "id": "123e4567-e89b-12d3-a456-426614174000",
+                    "exp": 1705317600,
+                    "iat": 1704712800
+                  }
+          - name: 401 Response
+            description: Unauthorized - missing or invalid token
+            request:
+              url: "{{baseUrl}}/users/test"
+              method: GET
+            response:
+              status: 401
+              statusText: Unauthorized
+              headers:
+                - name: Content-Type
+                  value: application/json
+              body:
+                type: json
+                data: |-
+                  {
+                    "error": "unauthorized",
+                    "message": "Missing or invalid authorization token",
+                    "status_code": 401
+                  }
+  - info:
+      name: Health
+      type: folder
+      seq: 1
+    request:
+      auth: inherit
+    items:
+      - info:
+          name: Health check endpoint
+          type: http
+          seq: 1
+          tags:
+            - Health
+        http:
+          method: GET
+          url: "{{baseUrl}}/healthx"
+          auth: inherit
+        settings:
+          encodeUrl: true
+          timeout: 0
+          followRedirects: true
+          maxRedirects: 5
+        examples:
+          - name: 204 Response
+            description: Service is healthy
+            request:
+              url: "{{baseUrl}}/healthx"
+              method: GET
+            response:
+              status: 204
+              statusText: No Content
+  - info:
+      name: Transfers
+      type: folder
+      seq: 3
+    request:
+      auth: inherit
+    items:
+      - info:
+          name: Create transfer
+          type: http
+          seq: 2
+          tags:
+            - Transfers
+        http:
+          method: POST
+          url: "{{baseUrl}}/transfers/"
+          body:
+            type: json
+            data: |-
+              {
+                "to_wallet_id": "123e4567-e89b-12d3-a456-426614174002",
+                "amount_in_piastres": 5000,
+                "note": "Dinner split"
+              }
+          auth:
+            type: bearer
+            token: "{{token}}"
+        settings:
+          encodeUrl: true
+          timeout: 0
+          followRedirects: true
+          maxRedirects: 5
+        examples:
+          - name: 200 Response
+            description: Transfer created successfully
+            request:
+              url: "{{baseUrl}}/transfers/"
+              method: POST
+              body:
+                type: json
+                data: |-
+                  {
+                    "to_wallet_id": "123e4567-e89b-12d3-a456-426614174002",
+                    "amount_in_piastres": 5000,
+                    "note": "Dinner split"
+                  }
+            response:
+              status: 200
+              statusText: OK
+              headers:
+                - name: Content-Type
+                  value: application/json
+              body:
+                type: json
+                data: |-
+                  {
+                    "id": "123e4567-e89b-12d3-a456-426614174001",
+                    "from_wallet_id": "123e4567-e89b-12d3-a456-426614174000",
+                    "to_wallet_id": "123e4567-e89b-12d3-a456-426614174002",
+                    "amount_in_piastres": 5000,
+                    "status": "completed",
+                    "note": "Dinner split",
+                    "created_at": "2024-01-15T10:30:00Z"
+                  }
+          - name: 200 Response (Scheduled)
+            description: Scheduled transfer created successfully
+            request:
+              url: "{{baseUrl}}/transfers/"
+              method: POST
+              body:
+                type: json
+                data: |-
+                  {
+                    "to_wallet_id": "123e4567-e89b-12d3-a456-426614174002",
+                    "amount_in_piastres": 5000,
+                    "note": "Rent payment",
+                    "scheduled_at": "2024-01-20T10:00:00Z"
+                  }
+            response:
+              status: 200
+              statusText: OK
+              headers:
+                - name: Content-Type
+                  value: application/json
+              body:
+                type: json
+                data: |-
+                  {
+                    "id": "123e4567-e89b-12d3-a456-426614174001",
+                    "from_wallet_id": "123e4567-e89b-12d3-a456-426614174000",
+                    "to_wallet_id": "123e4567-e89b-12d3-a456-426614174002",
+                    "amount_in_piastres": 5000,
+                    "status": "pending",
+                    "note": "Rent payment",
+                    "created_at": "2024-01-15T10:30:00Z"
+                  }
+          - name: 400 Response
+            description: Bad request - invalid input
+            request:
+              url: "{{baseUrl}}/transfers/"
+              method: POST
+              body:
+                type: json
+                data: |-
+                  {
+                    "to_wallet_id": "123e4567-e89b-12d3-a456-426614174002",
+                    "amount_in_piastres": 500,
+                    "note": "Too small"
+                  }
+            response:
+              status: 400
+              statusText: Bad Request
+              headers:
+                - name: Content-Type
+                  value: application/json
+              body:
+                type: json
+                data: |-
+                  {
+                    "error": "Bad request",
+                    "message": "Amount must be at least 1000 piastres",
+                    "status_code": 400
+                  }
+          - name: 400 Response
+            description: Bad request - cannot transfer to self
+            request:
+              url: "{{baseUrl}}/transfers/"
+              method: POST
+              body:
+                type: json
+                data: |-
+                  {
+                    "to_wallet_id": "123e4567-e89b-12d3-a456-426614174000",
+                    "amount_in_piastres": 5000,
+                    "note": "Self transfer"
+                  }
+            response:
+              status: 400
+              statusText: Bad Request
+              headers:
+                - name: Content-Type
+                  value: application/json
+              body:
+                type: json
+                data: |-
+                  {
+                    "error": "Bad request",
+                    "message": "Can not transfer to self",
+                    "status_code": 400
+                  }
+          - name: 400 Response
+            description: Bad request - insufficient funds
+            request:
+              url: "{{baseUrl}}/transfers/"
+              method: POST
+              body:
+                type: json
+                data: |-
+                  {
+                    "to_wallet_id": "123e4567-e89b-12d3-a456-426614174002",
+                    "amount_in_piastres": 1000000,
+                    "note": "Large amount"
+                  }
+            response:
+              status: 400
+              statusText: Bad Request
+              headers:
+                - name: Content-Type
+                  value: application/json
+              body:
+                type: json
+                data: |-
+                  {
+                    "error": "Bad request",
+                    "message": "Insufficient funds",
+                    "status_code": 400
+                  }
+          - name: 400 Response
+            description: Bad request - scheduled time must be in future
+            request:
+              url: "{{baseUrl}}/transfers/"
+              method: POST
+              body:
+                type: json
+                data: |-
+                  {
+                    "to_wallet_id": "123e4567-e89b-12d3-a456-426614174002",
+                    "amount_in_piastres": 5000,
+                    "note": "Past scheduled",
+                    "scheduled_at": "2020-01-01T10:00:00Z"
+                  }
+            response:
+              status: 400
+              statusText: Bad Request
+              headers:
+                - name: Content-Type
+                  value: application/json
+              body:
+                type: json
+                data: |-
+                  {
+                    "error": "Bad request",
+                    "message": "Scheduled time must be in the future",
+                    "status_code": 400
+                  }
+          - name: 404 Response
+            description: Not found - recipient wallet not found
+            request:
+              url: "{{baseUrl}}/transfers/"
+              method: POST
+              body:
+                type: json
+                data: |-
+                  {
+                    "to_wallet_id": "00000000-0000-0000-0000-000000000000",
+                    "amount_in_piastres": 5000,
+                    "note": "Invalid recipient"
+                  }
+            response:
+              status: 404
+              statusText: Not Found
+              headers:
+                - name: Content-Type
+                  value: application/json
+              body:
+                type: json
+                data: |-
+                  {
+                    "error": "Wallet not found",
+                    "message": "Wallet not found",
+                    "status_code": 404
+                  }
+          - name: 401 Response
+            description: Unauthorized - missing or invalid token
+            request:
+              url: "{{baseUrl}}/transfers/"
+              method: POST
+            response:
+              status: 401
+              statusText: Unauthorized
+              headers:
+                - name: Content-Type
+                  value: application/json
+              body:
+                type: json
+                data: |-
+                  {
+                    "error": "unauthorized",
+                    "message": "Missing or invalid authorization token",
+                    "status_code": 401
+                  }
+      - info:
+          name: Get transfer by ID
+          type: http
+          seq: 3
+          tags:
+            - Transfers
+        http:
+          method: GET
+          url: "{{baseUrl}}/transfers/:id"
+          params:
+            - name: id
+              value: ""
+              type: path
+          auth:
+            type: bearer
+            token: "{{token}}"
+        settings:
+          encodeUrl: true
+          timeout: 0
+          followRedirects: true
+          maxRedirects: 5
+        examples:
+          - name: 200 Response
+            description: Transfer retrieved successfully
+            request:
+              url: "{{baseUrl}}/transfers/:id"
+              method: GET
+            response:
+              status: 200
+              statusText: OK
+              headers:
+                - name: Content-Type
+                  value: application/json
+              body:
+                type: json
+                data: |-
+                  {
+                    "transfer": {
+                      "id": "123e4567-e89b-12d3-a456-426614174001",
+                      "amount_in_piastres": 5000,
+                      "status": "completed",
+                      "note": "Dinner split",
+                      "created_at": "2024-01-15T10:30:00Z"
+                    }
+                  }
+          - name: 400 Response
+            description: Bad request - invalid UUID
+            request:
+              url: "{{baseUrl}}/transfers/:id"
+              method: GET
+            response:
+              status: 400
+              statusText: Bad Request
+              headers:
+                - name: Content-Type
+                  value: application/json
+              body:
+                type: json
+                data: |-
+                  {
+                    "error": "Bad request",
+                    "message": "invalid id",
+                    "status_code": 400
+                  }
+          - name: 404 Response
+            description: Not found - transfer not found
+            request:
+              url: "{{baseUrl}}/transfers/:id"
+              method: GET
+            response:
+              status: 404
+              statusText: Not Found
+              headers:
+                - name: Content-Type
+                  value: application/json
+              body:
+                type: json
+                data: |-
+                  {
+                    "error": "Transfer was not found",
+                    "message": "Transfer was not found",
+                    "status_code": 404
+                  }
+          - name: 401 Response
+            description: Unauthorized - missing or invalid token
+            request:
+              url: "{{baseUrl}}/transfers/:id"
+              method: GET
+            response:
+              status: 401
+              statusText: Unauthorized
+              headers:
+                - name: Content-Type
+                  value: application/json
+              body:
+                type: json
+                data: |-
+                  {
+                    "error": "unauthorized",
+                    "message": "Missing or invalid authorization token",
+                    "status_code": 401
+                  }
+      - info:
+          name: Get transfers
+          type: http
+          seq: 1
+          tags:
+            - Transfers
+        http:
+          method: GET
+          url: "{{baseUrl}}/transfers/"
+          auth:
+            type: bearer
+            token: "{{token}}"
+        settings:
+          encodeUrl: true
+          timeout: 0
+          followRedirects: true
+          maxRedirects: 5
+        examples:
+          - name: 200 Response
+            description: Transfers retrieved successfully
+            request:
+              url: "{{baseUrl}}/transfers/"
+              method: GET
+            response:
+              status: 200
+              statusText: OK
+              headers:
+                - name: Content-Type
+                  value: application/json
+              body:
+                type: json
+                data: |-
+                  {
+                    "from_wallet_id": "123e4567-e89b-12d3-a456-426614174000",
+                    "transfers": [
+                      {
+                        "id": "123e4567-e89b-12d3-a456-426614174001",
+                        "amount_in_piastres": 5000,
+                        "status": "completed",
+                        "note": "Dinner split",
+                        "created_at": "2024-01-15T10:30:00Z"
+                      }
+                    ]
+                  }
+          - name: 401 Response
+            description: Unauthorized - missing or invalid token
+            request:
+              url: "{{baseUrl}}/transfers/"
+              method: GET
+            response:
+              status: 401
+              statusText: Unauthorized
+              headers:
+                - name: Content-Type
+                  value: application/json
+              body:
+                type: json
+                data: |-
+                  {
+                    "error": "unauthorized",
+                    "message": "Missing or invalid authorization token",
+                    "status_code": 401
+                  }
+      - info:
+          name: Scheduled
+          type: folder
+          seq: 1
+        request:
+          auth: inherit
+        items:
+          - info:
+              name: Cancel scheduled transfer
+              type: http
+              seq: 2
+              tags:
+                - Transfers
+            http:
+              method: DELETE
+              url: "{{baseUrl}}/transfers/scheduled/:id"
+              params:
+                - name: id
+                  value: ""
+                  type: path
+              auth:
+                type: bearer
+                token: "{{token}}"
+            settings:
+              encodeUrl: true
+              timeout: 0
+              followRedirects: true
+              maxRedirects: 5
+            examples:
+              - name: 200 Response
+                description: Scheduled transfer cancelled successfully
+                request:
+                  url: "{{baseUrl}}/transfers/scheduled/:id"
+                  method: DELETE
+                response:
+                  status: 200
+                  statusText: OK
+                  headers:
+                    - name: Content-Type
+                      value: application/json
+                  body:
+                    type: json
+                    data: |-
+                      {
+                        "cancelled_id": "123e4567-e89b-12d3-a456-426614174001"
+                      }
+              - name: 400 Response
+                description: Bad request - invalid UUID
+                request:
+                  url: "{{baseUrl}}/transfers/scheduled/:id"
+                  method: DELETE
+                response:
+                  status: 400
+                  statusText: Bad Request
+                  headers:
+                    - name: Content-Type
+                      value: application/json
+                  body:
+                    type: json
+                    data: |-
+                      {
+                        "error": "Bad request",
+                        "message": "invalid id",
+                        "status_code": 400
+                      }
+              - name: 400 Response
+                description: Bad request - transfer already executed
+                request:
+                  url: "{{baseUrl}}/transfers/scheduled/:id"
+                  method: DELETE
+                response:
+                  status: 400
+                  statusText: Bad Request
+                  headers:
+                    - name: Content-Type
+                      value: application/json
+                  body:
+                    type: json
+                    data: |-
+                      {
+                        "error": "Bad request",
+                        "message": "Transfer already executed",
+                        "status_code": 400
+                      }
+              - name: 400 Response
+                description: Bad request - too late to cancel
+                request:
+                  url: "{{baseUrl}}/transfers/scheduled/:id"
+                  method: DELETE
+                response:
+                  status: 400
+                  statusText: Bad Request
+                  headers:
+                    - name: Content-Type
+                      value: application/json
+                  body:
+                    type: json
+                    data: |-
+                      {
+                        "error": "Bad request",
+                        "message": "Too late to cancel transfer",
+                        "status_code": 400
+                      }
+              - name: 403 Response
+                description: Forbidden - transfer belongs to another user
+                request:
+                  url: "{{baseUrl}}/transfers/scheduled/:id"
+                  method: DELETE
+                response:
+                  status: 403
+                  statusText: Forbidden
+                  headers:
+                    - name: Content-Type
+                      value: application/json
+                  body:
+                    type: json
+                    data: |-
+                      {
+                        "error": "Forbidden",
+                        "message": "Transfer belongs to another user",
+                        "status_code": 403
+                      }
+              - name: 404 Response
+                description: Not found - transfer not found
+                request:
+                  url: "{{baseUrl}}/transfers/scheduled/:id"
+                  method: DELETE
+                response:
+                  status: 404
+                  statusText: Not Found
+                  headers:
+                    - name: Content-Type
+                      value: application/json
+                  body:
+                    type: json
+                    data: |-
+                      {
+                        "error": "Transfer was not found",
+                        "message": "Transfer was not found",
+                        "status_code": 404
+                      }
+              - name: 401 Response
+                description: Unauthorized - missing or invalid token
+                request:
+                  url: "{{baseUrl}}/transfers/scheduled/:id"
+                  method: DELETE
+                response:
+                  status: 401
+                  statusText: Unauthorized
+                  headers:
+                    - name: Content-Type
+                      value: application/json
+                  body:
+                    type: json
+                    data: |-
+                      {
+                        "error": "unauthorized",
+                        "message": "Missing or invalid authorization token",
+                        "status_code": 401
+                      }
+          - info:
+              name: Get scheduled transfers
+              type: http
+              seq: 1
+              tags:
+                - Transfers
+            http:
+              method: GET
+              url: "{{baseUrl}}/transfers/scheduled/"
+              auth:
+                type: bearer
+                token: "{{token}}"
+            settings:
+              encodeUrl: true
+              timeout: 0
+              followRedirects: true
+              maxRedirects: 5
+            examples:
+              - name: 200 Response
+                description: Scheduled transfers retrieved successfully
+                request:
+                  url: "{{baseUrl}}/transfers/scheduled/"
+                  method: GET
+                response:
+                  status: 200
+                  statusText: OK
+                  headers:
+                    - name: Content-Type
+                      value: application/json
+                  body:
+                    type: json
+                    data: |-
+                      {
+                        "scheduled_transfers": [
+                          {
+                            "id": "123e4567-e89b-12d3-a456-426614174001",
+                            "transfer_id": "123e4567-e89b-12d3-a456-426614174002",
+                            "scheduled_at": "2024-01-20T10:00:00Z",
+                            "executed_at": null,
+                            "created_at": "2024-01-15T10:30:00Z"
+                          }
+                        ]
+                      }
+              - name: 401 Response
+                description: Unauthorized - missing or invalid token
+                request:
+                  url: "{{baseUrl}}/transfers/scheduled/"
+                  method: GET
+                response:
+                  status: 401
+                  statusText: Unauthorized
+                  headers:
+                    - name: Content-Type
+                      value: application/json
+                  body:
+                    type: json
+                    data: |-
+                      {
+                        "error": "unauthorized",
+                        "message": "Missing or invalid authorization token",
+                        "status_code": 401
+                      }
+  - info:
+      name: Users
+      type: folder
+      seq: 1
+    request:
+      auth: inherit
+    items:
+      - info:
+          name: Search users
+          type: http
+          seq: 1
+          tags:
+            - Users
+        http:
+          method: GET
+          url: "{{baseUrl}}/users?name=John"
+          params:
+            - name: name
+              value: John
+              type: query
+          auth:
+            type: bearer
+            token: "{{token}}"
+        settings:
+          encodeUrl: true
+          timeout: 0
+          followRedirects: true
+          maxRedirects: 5
+        examples:
+          - name: 200 Response
+            description: Users found
+            request:
+              url: "{{baseUrl}}/users?name=John"
+              method: GET
+            response:
+              status: 200
+              statusText: OK
+              headers:
+                - name: Content-Type
+                  value: application/json
+              body:
+                type: json
+                data: ""
+          - name: 401 Response
+            description: Unauthorized - missing or invalid token
+            request:
+              url: "{{baseUrl}}/users?name=John"
+              method: GET
+            response:
+              status: 401
+              statusText: Unauthorized
+              headers:
+                - name: Content-Type
+                  value: application/json
+              body:
+                type: json
+                data: |-
+                  {
+                  "error": "unauthorized",
+                  "message": "Missing or invalid authorization token",
+                  "status_code": 401
+                  }
+  - info:
+      name: Wallet
+      type: folder
+      seq: 5
+    request:
+      auth: inherit
+    items:
+      - info:
+          name: Get wallet
+          type: http
+          seq: 1
+          tags:
+            - Wallet
+        http:
+          method: GET
+          url: "{{baseUrl}}/wallet/"
+          auth:
+            type: bearer
+            token: "{{token}}"
+        settings:
+          encodeUrl: true
+          timeout: 0
+          followRedirects: true
+          maxRedirects: 5
+        examples:
+          - name: 200 Response
+            description: Wallet retrieved successfully
+            request:
+              url: "{{baseUrl}}/wallet/"
+              method: GET
+            response:
+              status: 200
+              statusText: OK
+              headers:
+                - name: Content-Type
+                  value: application/json
+              body:
+                type: json
+                data: |-
+                  {
+                    "id": "123e4567-e89b-12d3-a456-426614174001",
+                    "user_id": "123e4567-e89b-12d3-a456-426614174000",
+                    "balance": 100000,
+                    "created_at": "2024-01-15T10:30:00Z"
+                  }
+          - name: 401 Response
+            description: Unauthorized - missing or invalid token
+            request:
+              url: "{{baseUrl}}/wallet/"
+              method: GET
+            response:
+              status: 401
+              statusText: Unauthorized
+              headers:
+                - name: Content-Type
+                  value: application/json
+              body:
+                type: json
+                data: |-
+                  {
+                    "error": "unauthorized",
+                    "message": "Missing or invalid authorization token",
+                    "status_code": 401
+                  }
+      - info:
+          name: Top up wallet
+          type: http
+          seq: 2
+          tags:
+            - Wallet
+        http:
+          method: PATCH
+          url: "{{baseUrl}}/wallet/"
+          body:
+            type: json
+            data: |-
+              {
+                "amount": 5000
+              }
+          auth:
+            type: bearer
+            token: "{{token}}"
+        settings:
+          encodeUrl: true
+          timeout: 0
+          followRedirects: true
+          maxRedirects: 5
+        examples:
+          - name: 200 Response
+            description: Wallet topped up successfully
+            request:
+              url: "{{baseUrl}}/wallet/"
+              method: PATCH
+              headers:
+                - name: Content-Type
+                  value: application/json
+              body:
+                type: json
+                data: |-
+                  {
+                    "amount": 5000
+                  }
+            response:
+              status: 200
+              statusText: OK
+              headers:
+                - name: Content-Type
+                  value: application/json
+              body:
+                type: json
+                data: |-
+                  {
+                    "client_secret": "pi_test123_secret_abc",
+                    "amount": 5000,
+                    "currency": "usd"
+                  }
+          - name: 400 Response
+            description: Bad request - invalid amount
+            request:
+              url: "{{baseUrl}}/wallet/"
+              method: PATCH
+              headers:
+                - name: Content-Type
+                  value: application/json
+              body:
+                type: json
+                data: |-
+                  {
+                    "amount": -100
+                  }
+            response:
+              status: 400
+              statusText: Bad Request
+              headers:
+                - name: Content-Type
+                  value: application/json
+              body:
+                type: json
+                data: |-
+                  {
+                    "error": "invalid input",
+                    "message": "Amount must be a positive integer",
+                    "status_code": 400
+                  }
+          - name: 401 Response
+            description: Unauthorized - missing or invalid token
+            request:
+              url: "{{baseUrl}}/wallet/"
+              method: PATCH
+            response:
+              status: 401
+              statusText: Unauthorized
+              headers:
+                - name: Content-Type
+                  value: application/json
+              body:
+                type: json
+                data: |-
+                  {
+                    "error": "unauthorized",
+                    "message": "Missing or invalid authorization token",
+                    "status_code": 401
+                  }
+  - info:
+      name: Webhooks
+      type: folder
+      seq: 4
+    request:
+      auth: inherit
+    items:
+      - info:
+          name: Stripe webhook
+          type: http
+          seq: 1
+          tags:
+            - Webhooks
+        http:
+          method: POST
+          url: "{{baseUrl}}/webhook/stripe"
+          headers:
+            - name: Stripe-Signature
+              value: whsec_test_signature
+          body:
+            type: json
+            data: |-
+              {
+                "id": "evt_test_webhook",
+                "type": "payment_intent.succeeded",
+                "data": {
+                  "object": {
+                    "id": "pi_test123",
+                    "amount": 5000,
+                    "currency": "usd",
+                    "status": "succeeded"
+                  }
+                }
+              }
+          auth: inherit
+        settings:
+          encodeUrl: true
+          timeout: 0
+          followRedirects: true
+          maxRedirects: 5
+        examples:
+          - name: 200 Response
+            description: Webhook handled successfully
+            request:
+              url: "{{baseUrl}}/webhook/stripe"
+              method: POST
+              headers:
+                - name: Stripe-Signature
+                  value: whsec_test_signature
+              body:
+                type: json
+                data: |-
+                  {
+                    "id": "evt_test_webhook",
+                    "type": "payment_intent.succeeded",
+                    "data": {
+                      "object": {
+                        "id": "pi_test123",
+                        "amount": 5000,
+                        "currency": "usd",
+                        "status": "succeeded"
+                      }
+                    }
+                  }
+            response:
+              status: 200
+              statusText: OK
+              headers:
+                - name: Content-Type
+                  value: application/json
+              body:
+                type: json
+                data: |-
+                  {
+                    "received": true
+                  }
+          - name: 400 Response
+            description: Invalid Stripe signature
+            request:
+              url: "{{baseUrl}}/webhook/stripe"
+              method: POST
+              headers:
+                - name: Stripe-Signature
+                  value: invalid_signature
+              body:
+                type: json
+                data: |-
+                  {
+                    "id": "evt_test_webhook",
+                    "type": "payment_intent.succeeded",
+                    "data": {
+                      "object": {
+                        "id": "pi_test123",
+                        "amount": 5000,
+                        "currency": "usd",
+                        "status": "succeeded"
+                      }
+                    }
+                  }
+            response:
+              status: 400
+              statusText: Bad Request
+              headers:
+                - name: Content-Type
+                  value: application/json
+              body:
+                type: json
+                data: |-
+                  {
+                    "error": "invalid signature",
+                    "message": "Webhook signature verification failed",
+                    "status_code": 400
+                  }
+request:
+  auth:
+    type: bearer
+    token: "{{token}}"
+bundled: true
+extensions:
+  bruno:
+    ignore:
+      - node_modules
+      - .git
+    exportedAt: "2026-05-01T23:31:35.166Z"
+    exportedUsing: Bruno

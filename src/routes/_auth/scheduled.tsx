@@ -1,5 +1,4 @@
 import { createFileRoute } from "@tanstack/react-router"
-import { CreateScheduledForm } from "#/features/scheduled/CreateScheduledForm"
 import { ScheduledList } from "#/features/scheduled/ScheduledList"
 
 export const Route = createFileRoute("/_auth/scheduled")({
@@ -12,14 +11,10 @@ function Scheduled() {
       <h1 className="text-3xl font-bold text-black uppercase tracking-tight">
         Scheduled Transfers
       </h1>
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        <div>
-          <CreateScheduledForm />
-        </div>
-        <div>
-          <ScheduledList />
-        </div>
-      </div>
+      <p className="text-neutral-600 font-medium">
+        To create a scheduled transfer, go to Transfers and set a future date.
+      </p>
+      <ScheduledList />
     </div>
   )
 }

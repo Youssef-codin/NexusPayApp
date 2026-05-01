@@ -12,9 +12,7 @@ export const registerSchema = z
     email: z.string().email("Invalid email address"),
     password: z.string().min(8, "Password must be at least 8 characters"),
     confirmPassword: z.string(),
-    firstName: z.string().min(1, "First name is required"),
-    lastName: z.string().min(1, "Last name is required"),
-    phone: z.string().optional(),
+    full_name: z.string().min(1, "Full name is required"),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords don't match",
@@ -24,20 +22,19 @@ export const registerSchema = z
 export type RegisterInput = z.infer<typeof registerSchema>
 
 export const sendMoneySchema = z.object({
-  recipientId: z.string().min(1, "Recipient is required"),
-  recipientName: z.string().min(1, "Recipient name is required"),
-  amount: z.number().min(1, "Amount must be at least 1"),
+  to_wallet_id: z.string().min(1, "Recipient wallet ID is required"),
+  amount_in_piastres: z.number().min(1000, "Amount must be at least 1000 piastres (10 EGP)"),
   note: z.string().optional(),
+  scheduled_at: z.string().optional(),
 })
 
 export type SendMoneyInput = z.infer<typeof sendMoneySchema>
 
-export const createScheduledSchema = z.object({
-  recipientId: z.string().min(1, "Recipient is required"),
-  recipientName: z.string().min(1, "Recipient name is required"),
-  amount: z.number().min(1, "Amount must be at least 1"),
+export const scheduledTransferSchema = z.object({
+  to_wallet_id: z.string().min(1, "Recipient wallet ID is required"),
+  amount_in_piastres: z.number().min(1000, "Amount must be at least 1000 piastres (10 EGP)"),
   note: z.string().optional(),
-  scheduledAt: z.string().min(1, "Schedule date is required"),
+  scheduled_at: z.string().min(1, "Schedule date is required"),
 })
 
-export type CreateScheduledInput = z.infer<typeof createScheduledSchema>
+export type ScheduledTransferInput = z.infer<typeof scheduledTransferSchema>

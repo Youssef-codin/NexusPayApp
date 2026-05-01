@@ -18,7 +18,6 @@ import { Route as AuthScheduledRouteImport } from './routes/_auth/scheduled'
 import { Route as AuthProfileRouteImport } from './routes/_auth/profile'
 import { Route as AuthIndexRouteImport } from './routes/_auth/_index'
 import { Route as AuthTransfersTransferIdRouteImport } from './routes/_auth/transfers.$transferId'
-import { Route as AuthScheduledScheduledIdRouteImport } from './routes/_auth/scheduled.$scheduledId'
 
 const PublicRoute = PublicRouteImport.update({
   id: '/_public',
@@ -62,31 +61,23 @@ const AuthTransfersTransferIdRoute = AuthTransfersTransferIdRouteImport.update({
   path: '/$transferId',
   getParentRoute: () => AuthTransfersRoute,
 } as any)
-const AuthScheduledScheduledIdRoute =
-  AuthScheduledScheduledIdRouteImport.update({
-    id: '/$scheduledId',
-    path: '/$scheduledId',
-    getParentRoute: () => AuthScheduledRoute,
-  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof AuthIndexRoute
   '/profile': typeof AuthProfileRoute
-  '/scheduled': typeof AuthScheduledRouteWithChildren
+  '/scheduled': typeof AuthScheduledRoute
   '/transfers': typeof AuthTransfersRouteWithChildren
   '/login': typeof PublicLoginRoute
   '/register': typeof PublicRegisterRoute
-  '/scheduled/$scheduledId': typeof AuthScheduledScheduledIdRoute
   '/transfers/$transferId': typeof AuthTransfersTransferIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof AuthIndexRoute
   '/profile': typeof AuthProfileRoute
-  '/scheduled': typeof AuthScheduledRouteWithChildren
+  '/scheduled': typeof AuthScheduledRoute
   '/transfers': typeof AuthTransfersRouteWithChildren
   '/login': typeof PublicLoginRoute
   '/register': typeof PublicRegisterRoute
-  '/scheduled/$scheduledId': typeof AuthScheduledScheduledIdRoute
   '/transfers/$transferId': typeof AuthTransfersTransferIdRoute
 }
 export interface FileRoutesById {
@@ -95,11 +86,10 @@ export interface FileRoutesById {
   '/_public': typeof PublicRouteWithChildren
   '/_auth/_index': typeof AuthIndexRoute
   '/_auth/profile': typeof AuthProfileRoute
-  '/_auth/scheduled': typeof AuthScheduledRouteWithChildren
+  '/_auth/scheduled': typeof AuthScheduledRoute
   '/_auth/transfers': typeof AuthTransfersRouteWithChildren
   '/_public/login': typeof PublicLoginRoute
   '/_public/register': typeof PublicRegisterRoute
-  '/_auth/scheduled/$scheduledId': typeof AuthScheduledScheduledIdRoute
   '/_auth/transfers/$transferId': typeof AuthTransfersTransferIdRoute
 }
 export interface FileRouteTypes {
@@ -111,7 +101,6 @@ export interface FileRouteTypes {
     | '/transfers'
     | '/login'
     | '/register'
-    | '/scheduled/$scheduledId'
     | '/transfers/$transferId'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -121,7 +110,6 @@ export interface FileRouteTypes {
     | '/transfers'
     | '/login'
     | '/register'
-    | '/scheduled/$scheduledId'
     | '/transfers/$transferId'
   id:
     | '__root__'
@@ -133,7 +121,6 @@ export interface FileRouteTypes {
     | '/_auth/transfers'
     | '/_public/login'
     | '/_public/register'
-    | '/_auth/scheduled/$scheduledId'
     | '/_auth/transfers/$transferId'
   fileRoutesById: FileRoutesById
 }
@@ -207,27 +194,8 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthTransfersTransferIdRouteImport
       parentRoute: typeof AuthTransfersRoute
     }
-    '/_auth/scheduled/$scheduledId': {
-      id: '/_auth/scheduled/$scheduledId'
-      path: '/$scheduledId'
-      fullPath: '/scheduled/$scheduledId'
-      preLoaderRoute: typeof AuthScheduledScheduledIdRouteImport
-      parentRoute: typeof AuthScheduledRoute
-    }
   }
 }
-
-interface AuthScheduledRouteChildren {
-  AuthScheduledScheduledIdRoute: typeof AuthScheduledScheduledIdRoute
-}
-
-const AuthScheduledRouteChildren: AuthScheduledRouteChildren = {
-  AuthScheduledScheduledIdRoute: AuthScheduledScheduledIdRoute,
-}
-
-const AuthScheduledRouteWithChildren = AuthScheduledRoute._addFileChildren(
-  AuthScheduledRouteChildren,
-)
 
 interface AuthTransfersRouteChildren {
   AuthTransfersTransferIdRoute: typeof AuthTransfersTransferIdRoute
@@ -244,14 +212,14 @@ const AuthTransfersRouteWithChildren = AuthTransfersRoute._addFileChildren(
 interface AuthRouteChildren {
   AuthIndexRoute: typeof AuthIndexRoute
   AuthProfileRoute: typeof AuthProfileRoute
-  AuthScheduledRoute: typeof AuthScheduledRouteWithChildren
+  AuthScheduledRoute: typeof AuthScheduledRoute
   AuthTransfersRoute: typeof AuthTransfersRouteWithChildren
 }
 
 const AuthRouteChildren: AuthRouteChildren = {
   AuthIndexRoute: AuthIndexRoute,
   AuthProfileRoute: AuthProfileRoute,
-  AuthScheduledRoute: AuthScheduledRouteWithChildren,
+  AuthScheduledRoute: AuthScheduledRoute,
   AuthTransfersRoute: AuthTransfersRouteWithChildren,
 }
 

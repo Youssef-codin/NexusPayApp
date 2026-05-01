@@ -50,18 +50,18 @@ export function TransferList() {
               <div className="flex justify-between items-start">
                 <div>
                   <p className="font-bold text-black">
-                    {transfer.recipientName}
+                    To: {transfer.to_wallet_id.slice(0, 8)}...
                   </p>
                   <p className="text-sm text-neutral-600 font-medium">
                     {transfer.note || "No note"}
                   </p>
                   <p className="text-xs text-neutral-500 mt-1 font-medium">
-                    {formatRelativeTime(transfer.createdAt)}
+                    {formatRelativeTime(transfer.created_at)}
                   </p>
                 </div>
                 <div className="text-right">
                   <p className="font-bold text-black">
-                    -{formatCurrency(transfer.amount)}
+                    -{formatCurrency(transfer.amount_in_piastres)}
                   </p>
                   <span
                     className={`inline-block text-xs font-bold uppercase tracking-wider px-2 py-1 ${

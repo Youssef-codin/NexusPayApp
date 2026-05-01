@@ -65,15 +65,15 @@ api.interceptors.response.use(
         }
 
         const response = await axios.post("/api/auth/refresh", {
-          refreshToken,
+          refresh_token: refreshToken,
         })
 
-        const { accessToken, refreshToken: newRefreshToken } = response.data
+        const { jwt_token, refresh_token: newRefreshToken } = response.data
 
-        useAuthStore.getState().setTokens(accessToken, newRefreshToken)
+        useAuthStore.getState().setTokens(jwt_token, newRefreshToken)
 
-        processQueue(null, accessToken)
-        originalRequest.headers.Authorization = `Bearer ${accessToken}`
+        processQueue(null, jwt_token)
+        originalRequest.headers.Authorization = `Bearer ${jwt_token}`
         return api(originalRequest)
       } catch (refreshError) {
         processQueue(refreshError, null)

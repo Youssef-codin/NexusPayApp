@@ -1,192 +1,178 @@
-Welcome to your new TanStack Start app! 
+# Nexus — Payment Wallet Application
 
-# Getting Started
+A React SPA for sending money, scheduling transfers, and managing wallet balance.
 
-To run this application:
-
-```bash
-pnpm install
-pnpm dev
-```
-
-# Building For Production
-
-To build this application for production:
+## Quick Start
 
 ```bash
-pnpm build
+bun install
+bun run dev
 ```
 
-## Testing
+Visit `http://localhost:8000`
 
-This project uses [Vitest](https://vitest.dev/) for testing. You can run the tests with:
+---
 
-```bash
-pnpm test
+## Commands
+
+| Command | Description |
+|---------|-------------|
+| `bun run dev` | Start dev server on port 8000 |
+| `bun run build` | Production build |
+| `bun run preview` | Preview production build |
+| `bun run test` | Run tests (Vitest) |
+| `bun run lint` | Lint with Biome |
+| `bun run format` | Format with Biome |
+
+---
+
+## Tech Stack
+
+- **Runtime**: Bun
+- **Build**: Vite 8
+- **Framework**: React 19
+- **Language**: TypeScript
+- **Routing**: TanStack Router (file-based)
+- **Data Fetching**: TanStack Query v5
+- **State**: Zustand + persist middleware
+- **Forms**: React Hook Form + Zod
+- **Styling**: Tailwind CSS v4 + shadcn/ui
+- **Icons**: Lucide React
+
+---
+
+## Project Structure
+
+```
+src/
+├── api/           # Axios + typed API client
+├── components/    # Shared components + shadcn/ui
+├── features/     # Feature-based modules (auth, wallet, transfers, scheduled)
+├── hooks/        # TanStack Query hooks
+├── lib/          # Utilities, schemas, formatters
+├── routes/       # TanStack Router file-based routing
+├── store/        # Zustand auth store
+└── types/        # TypeScript interfaces
 ```
 
-## Styling
+---
 
-This project uses [Tailwind CSS](https://tailwindcss.com/) for styling.
+## Design System
 
-## Linting & Formatting
+The UI uses a **Neo-Brutalist** design:
 
-This project uses [Biome](https://biomejs.dev/) for linting and formatting. The following scripts are available:
+- **Background**: `#fcf8ff` (light surface)
+- **Borders**: 2px/4px solid black
+- **Shadows**: Hard offset `4px 4px 0px #000000`
+- **Accent**: Electric green `#00ff87`
+- **Font**: Space Grotesk
+- **Border-radius**: 0px everywhere
 
-```bash
-pnpm lint
-pnpm format
-pnpm check
-```
+---
 
-## Routing
+## API Integration
 
-This project uses [TanStack Router](https://tanstack.com/router) with file-based routing. Routes are managed as files in `src/routes`.
+The frontend connects to a backend at `/api`. Key endpoints:
 
-### Adding A Route
+### Authentication
+- `POST /auth/login` → `{jwt_token, refresh_token, email, full_name}`
+- `POST /auth/register` → `{jwt_token, refresh_token, ...}`
+- `POST /auth/refresh` → `{jwt_token, refresh_token}`
 
-To add a new route to your application just add a new file in the `./src/routes` directory.
+### Wallet
+- `GET /wallet/` → `{id, user_id, balance, created_at}`
+- `PATCH /wallet/` with `{amount}` → `{client_secret, amount, currency}`
 
-TanStack will automatically generate the content of the route file for you.
+### Transfers
+- `GET /transfers/` → `{from_wallet_id, transfers: [...]}`
+- `GET /transfers/:id` → `{transfer: {...}}`
+- `POST /transfers/` with `{to_wallet_id, amount_in_piastres, note?, scheduled_at?}`
 
-Now that you have two routes you can use a `Link` component to navigate between them.
+### Scheduled
+- `GET /transfers/scheduled/` → `{scheduled_transfers: [...]}`
+- `DELETE /transfers/scheduled/:id` → `{cancelled_id}`
 
-### Adding Links
+### Users
+- `GET /users?name=<query>` → Search recipients
 
-To use SPA (Single Page Application) navigation you will need to import the `Link` component from `@tanstack/react-router`.
+**Note**: All amounts are in **piastres** (100 piastres = 1 EGP).
 
-```tsx
-import { Link } from "@tanstack/react-router";
-```
+---
 
-Then anywhere in your JSX you can use it like so:
+## Auth Flow
 
-```tsx
-<Link to="/about">About</Link>
-```
+1. User logs in → stores `jwt_token` and `refresh_token` in Zustand + localStorage
+2. Every request gets `Authorization: Bearer <jwt_token>` via axios interceptor
+3. On 401, axios automatically tries to refresh using `refresh_token`
+4. If refresh fails, user is logged out
 
-This will create a link that will navigate to the `/about` route.
+---
 
-More information on the `Link` component can be found in the [Link documentation](https://tanstack.com/router/v1/docs/framework/react/api/router/linkComponent).
+## Adding New Features
 
-### Using A Layout
-
-In the File Based Routing setup the layout is located in `src/routes/__root.tsx`. Anything you add to the root route will appear in all the routes. The route content will appear in the JSX where you render `{children}` in the `shellComponent`.
-
-Here is an example layout that includes a header:
-
-```tsx
-import { HeadContent, Scripts, createRootRoute } from '@tanstack/react-router'
-
-export const Route = createRootRoute({
-  head: () => ({
-    meta: [
-      { charSet: 'utf-8' },
-      { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-      { title: 'My App' },
-    ],
-  }),
-  shellComponent: ({ children }) => (
-    <html lang="en">
-      <head>
-        <HeadContent />
-      </head>
-      <body>
-        <header>
-          <nav>
-            <Link to="/">Home</Link>
-            <Link to="/about">About</Link>
-          </nav>
-        </header>
-        {children}
-        <Scripts />
-      </body>
-    </html>
-  ),
-})
-```
-
-More information on layouts can be found in the [Layouts documentation](https://tanstack.com/router/latest/docs/framework/react/guide/routing-concepts#layouts).
-
-## Server Functions
-
-TanStack Start provides server functions that allow you to write server-side code that seamlessly integrates with your client components.
-
-```tsx
-import { createServerFn } from '@tanstack/react-start'
-
-const getServerTime = createServerFn({
-  method: 'GET',
-}).handler(async () => {
-  return new Date().toISOString()
-})
-
-// Use in a component
-function MyComponent() {
-  const [time, setTime] = useState('')
-  
-  useEffect(() => {
-    getServerTime().then(setTime)
-  }, [])
-  
-  return <div>Server time: {time}</div>
+### New API Endpoint
+Add to `src/api/client.ts`:
+```typescript
+export const newApi = {
+  something: () => client.get<ReturnType>("/endpoint"),
 }
 ```
 
-## API Routes
-
-You can create API routes by using the `server` property in your route definitions:
-
-```tsx
-import { createFileRoute } from '@tanstack/react-router'
-import { json } from '@tanstack/react-start'
-
-export const Route = createFileRoute('/api/hello')({
-  server: {
-    handlers: {
-      GET: () => json({ message: 'Hello, World!' }),
-    },
-  },
-})
-```
-
-## Data Fetching
-
-There are multiple ways to fetch data in your application. You can use TanStack Query to fetch data from a server. But you can also use the `loader` functionality built into TanStack Router to load the data for a route before it's rendered.
-
-For example:
-
-```tsx
-import { createFileRoute } from '@tanstack/react-router'
-
-export const Route = createFileRoute('/people')({
-  loader: async () => {
-    const response = await fetch('https://swapi.dev/api/people')
-    return response.json()
-  },
-  component: PeopleComponent,
-})
-
-function PeopleComponent() {
-  const data = Route.useLoaderData()
-  return (
-    <ul>
-      {data.results.map((person) => (
-        <li key={person.name}>{person.name}</li>
-      ))}
-    </ul>
-  )
+### New Type
+Add to `src/types/index.ts`:
+```typescript
+export interface NewType {
+  field: string
 }
 ```
 
-Loaders simplify your data fetching logic dramatically. Check out more information in the [Loader documentation](https://tanstack.com/router/latest/docs/framework/react/guide/data-loading#loader-parameters).
+### New Form
+1. Add Zod schema to `src/lib/schemas.ts`
+2. Create component in `src/features/<feature>/`
+3. Use RHF + zodResolver + TanStack Query mutation
 
-# Demo files
+### New Route
+Add file to `src/routes/` following TanStack Router naming:
+- `_prefix/filename.tsx` → `/prefix/filename`
+- `_prefix/_index.tsx` → `/prefix` (index route)
 
-Files prefixed with `demo` can be safely deleted. They are there to provide a starting point for you to play around with the features you've installed.
+---
 
-# Learn More
+## For Developers
 
-You can learn more about all of the offerings from TanStack in the [TanStack documentation](https://tanstack.com).
+- Use `#/` path alias for imports (e.g., `import { useAuth } from "#/hooks/use-auth"`)
+- shadcn/ui components are in `src/components/ui/` — they're copied, not npm packages
+- Run `bun run build` before deploying — build must pass
+- Don't commit secrets — use env variables for API keys
 
-For TanStack Start specific documentation, visit [TanStack Start](https://tanstack.com/start).
+---
+
+## Troubleshooting
+
+**Build fails?**
+```bash
+bun run build
+```
+
+**Linting errors?**
+```bash
+bun run lint --write  # auto-fix
+```
+
+**Dev server not starting?**
+```bash
+rm -rf node_modules/.cache
+bun run dev
+```
+
+---
+
+## Notes for LLMs
+
+This project uses specific patterns. See `AGENTS.md` (if exists) or remember:
+
+- **snake_case** for API fields (e.g., `jwt_token`, `amount_in_piastres`)
+- **camelCase** for TypeScript/React
+- Zustand store uses `persist` middleware — check localStorage if auth state persists unexpectedly
+- TanStack Router auto-generates `routeTree.gen.ts` — don't edit manually
+- Forms use Zod schemas, not manual validation
