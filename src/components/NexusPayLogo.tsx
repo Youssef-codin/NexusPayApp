@@ -7,52 +7,34 @@ interface NexusPayLogoProps {
   type?: NexusPayLogoType;
 }
 
-export const ICON_BACKGROUND = "#2C2C2A";
-export const NODE_GREEN = "#1D9E75";
-export const NODE_BLUE = "#378ADD";
-export const NODE_CORAL = "#D85A30";
-export const TEXT_NEXUS = "#2C2C2A";
-export const TEXT_PAY = "#888780";
+export const ICON_BACKGROUND = "#000000";
+export const ICON_RING = "#000000";
+export const ICON_CENTER_DOT = "#000000";
+export const TEXT_NEXUS = "#000000";
+export const TEXT_PAY = "#00ff87";
 
 const Mark: FC<{ size: number }> = ({ size }) => (
   <svg
     width={size}
     height={size}
-    viewBox="0 0 48 48"
+    viewBox="0 0 24 24"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
   >
-    <rect width="48" height="48" rx="10" fill={ICON_BACKGROUND} />
-    <circle cx="14" cy="17" r="4" fill={NODE_GREEN} />
-    <circle cx="24" cy="32" r="4" fill={NODE_BLUE} />
-    <circle cx="34" cy="17" r="4" fill={NODE_CORAL} />
-    <line
-      x1="14"
-      y1="17"
-      x2="24"
-      y2="32"
-      stroke="white"
-      strokeWidth="1"
-      strokeOpacity="0.4"
+    <rect
+      x="2"
+      y="2"
+      width="20"
+      height="20"
+      stroke="currentColor"
+      strokeWidth="2"
     />
-    <line
-      x1="24"
-      y1="32"
-      x2="34"
-      y2="17"
-      stroke="white"
-      strokeWidth="1"
-      strokeOpacity="0.4"
-    />
-    <line
-      x1="14"
-      y1="17"
-      x2="34"
-      y2="17"
-      stroke="white"
-      strokeWidth="1"
-      strokeOpacity="0.3"
-      strokeDasharray="3 3"
+    <path
+      d="M7 17 L7 7 L17 17 L17 7"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="square"
+      strokeLinejoin="miter"
     />
   </svg>
 );
@@ -60,31 +42,20 @@ const Mark: FC<{ size: number }> = ({ size }) => (
 const Wordmark: FC<{ height: number }> = ({ height }) => (
   <svg
     height={height}
-    viewBox="0 0 160 32"
+    viewBox="0 0 100 32"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
   >
     <text
       x="0"
       y="24"
-      fontFamily="system-ui, -apple-system, sans-serif"
+      fontFamily="Geist, system-ui, -apple-system, sans-serif"
       fontSize="24"
       fontWeight="700"
-      letterSpacing="-0.5"
-      fill={TEXT_NEXUS}
+      letterSpacing="0.2em"
+      fill="currentColor"
     >
-      Nexus
-    </text>
-    <text
-      x="88"
-      y="24"
-      fontFamily="system-ui, -apple-system, sans-serif"
-      fontSize="24"
-      fontWeight="300"
-      letterSpacing="-0.5"
-      fill={TEXT_PAY}
-    >
-      Pay
+      NEXUS
     </text>
   </svg>
 );
@@ -117,4 +88,3 @@ export const NexusPayMark = (props: Omit<NexusPayLogoProps, "type">) => (
 export const NexusPayWordmark = (props: Omit<NexusPayLogoProps, "type">) => (
   <NexusPayLogo {...props} type="wordmark" />
 );
-
