@@ -8,7 +8,6 @@ import type {
   Transfer,
   TransferListResponse,
   TransferDetailResponse,
-  ScheduledTransfer,
   ScheduledTransferListResponse,
   UserSearchResult,
 } from "#/types"

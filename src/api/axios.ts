@@ -2,7 +2,7 @@ import axios, { type AxiosError, type InternalAxiosRequestConfig } from "axios"
 import { useAuthStore } from "#/store/auth-store"
 
 const api = axios.create({
-  baseURL: "/api",
+  baseURL: "http://localhost:3000",
   headers: {
     "Content-Type": "application/json",
   },
@@ -42,8 +42,13 @@ api.interceptors.response.use(
     const originalRequest = error.config as InternalAxiosRequestConfig & {
       _retry?: boolean
     }
+    const requestUrl = originalRequest?.url ?? ""
+    const isAuthRequest =
+      requestUrl.includes("/auth/login") ||
+      requestUrl.includes("/auth/register") ||
+      requestUrl.includes("/auth/refresh")
 
-    if (error.response?.status === 401 && !originalRequest._retry) {
+    if (error.response?.status === 401 && !originalRequest._retry && !isAuthRequest) {
       if (isRefreshing) {
         return new Promise((resolve, reject) => {
           failedQueue.push({ resolve, reject })
@@ -64,7 +69,7 @@ api.interceptors.response.use(
           throw new Error("No refresh token")
         }
 
-        const response = await axios.post("/api/auth/refresh", {
+        const response = await axios.post("http://localhost:3000/auth/refresh", {
           refresh_token: refreshToken,
         })
 

@@ -1,7 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { BalanceDisplay } from "#/features/wallet/BalanceDisplay";
-import { TopUpButton } from "#/features/wallet/TopUpButton";
-import { TransferList } from "#/features/transfers/TransferList";
+import { BalanceHero } from "#/features/dashboard/BalanceHero";
+import { MonthSummary } from "#/features/dashboard/MonthSummary";
+import { RecentActivity } from "#/features/dashboard/RecentActivity";
+import { mockDashboard } from "#/lib/mock-data";
 
 export const Route = createFileRoute("/_auth/_index")({
 	component: Dashboard,
@@ -10,26 +11,15 @@ export const Route = createFileRoute("/_auth/_index")({
 function Dashboard() {
 	return (
 		<div className="space-y-8">
-			<div>
-				<h1 className="text-3xl font-bold text-black mb-6 uppercase tracking-tight">
-					Dashboard
-				</h1>
-				<div className="flex gap-4 items-start">
-					<div className="flex-1">
-						<BalanceDisplay />
-					</div>
-					<div>
-						<TopUpButton />
-					</div>
+			<BalanceHero
+				balanceInPiastres={mockDashboard.balance_in_piastres}
+			/>
+			<div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+				<div className="lg:col-span-2">
+					<RecentActivity items={mockDashboard.recent_activity} />
 				</div>
-			</div>
-			<div>
-				<h2 className="text-xl font-bold text-black mb-4 uppercase tracking-wider">
-					Recent Activity
-				</h2>
-				<TransferList />
+				<MonthSummary summary={mockDashboard.month_summary} />
 			</div>
 		</div>
 	);
 }
-

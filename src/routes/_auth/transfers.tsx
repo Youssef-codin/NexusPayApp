@@ -1,10 +1,8 @@
-import { createFileRoute } from "@tanstack/react-router"
-import { SendMoneyForm } from "#/features/transfers/SendMoneyForm"
-import { TransferList } from "#/features/transfers/TransferList"
+import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_auth/transfers")({
   component: Transfers,
-})
+});
 
 function Transfers() {
   return (
@@ -14,12 +12,10 @@ function Transfers() {
       </h1>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <div>
-          <SendMoneyForm />
         </div>
-        <div>
-          <TransferList />
-        </div>
+        <div></div>
       </div>
     </div>
-  )
+  );
 }
+

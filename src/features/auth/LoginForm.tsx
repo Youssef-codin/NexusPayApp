@@ -1,65 +1,44 @@
-import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useNavigate } from "@tanstack/react-router"
-import { loginSchema, type LoginInput } from "#/lib/schemas"
-import { useLogin } from "#/hooks/use-auth"
-import { Button } from "#/components/ui/button"
-import { Input } from "#/components/ui/input"
-import { Mail, Lock, ArrowRight } from "lucide-react"
-
-function NexusMark({ className }: { className?: string }) {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      className={className}
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <rect
-        x="2"
-        y="2"
-        width="20"
-        height="20"
-        stroke="currentColor"
-        strokeWidth="2"
-      />
-      <path
-        d="M7 17 L7 7 L17 17 L17 7"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="square"
-        strokeLinejoin="miter"
-      />
-    </svg>
-  )
-}
+import { useNavigate } from "@tanstack/react-router";
+import { useForm } from "@tanstack/react-form";
+import { loginSchema } from "#/lib/schemas";
+import { useLogin } from "#/hooks/use-auth";
+import { Button } from "#/components/ui/button";
+import { Mail, Lock, ArrowRight } from "lucide-react";
+import axios from "axios";
+import { NexusPayMark } from "#/components/NexusPayLogo";
+import { AuthFormField } from "./AuthFormField";
 
 export function LoginForm() {
-  const navigate = useNavigate()
-  const login = useLogin()
+  const navigate = useNavigate();
+  const login = useLogin();
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<LoginInput>({
-    resolver: zodResolver(loginSchema),
-  })
-
-  const onSubmit = async (data: LoginInput) => {
-    try {
-      await login.mutateAsync(data)
-      navigate({ to: "/dashboard" })
-    } catch {
-      // Error handled by query
-    }
-  }
+  const form = useForm({
+    defaultValues: {
+      email: "",
+      password: "",
+    },
+    validators: {
+      onBlur: loginSchema,
+      onChange: () => {
+        if (login.error) login.reset();
+        return undefined;
+      },
+    },
+    onSubmit: async ({ value }) => {
+      try {
+        await login.mutateAsync(value);
+        navigate({ to: "/" });
+      } catch {
+        // Error is handled by mutation state
+      }
+    },
+  });
 
   return (
     <div className="p-8 md:p-10">
       {/* Logo */}
       <div className="flex items-center gap-2.5 mb-8">
-        <NexusMark className="w-5 h-5 text-black" />
+        <NexusPayMark size={20} className="w-5 h-5" />
         <span className="text-sm font-bold tracking-[0.25em] text-black">
           NEXUS
         </span>
@@ -79,87 +58,118 @@ export function LoginForm() {
 
       <div className="h-px bg-black mb-8" />
 
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          form.handleSubmit();
+        }}
+        className="space-y-6"
+      >
         {/* Email Address */}
-        <div>
-          <label className="block text-xs font-bold text-black mb-2 uppercase tracking-wider">
-            Email Address
-          </label>
-          <div className="relative">
-            <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none" />
-            <Input
-              {...register("email")}
+        <form.Field
+          name="email"
+          children={(field) => (
+            <AuthFormField
+              label="Email Address"
+              field={field}
+              icon={Mail}
               type="email"
-              className="pl-10 h-12 border-2 border-black rounded-none bg-gray-50 text-black placeholder:text-gray-400 focus-visible:ring-0 focus-visible:border-black focus-visible:shadow-[4px_4px_0px_#00ff87] transition-shadow"
               placeholder="agent@nexus.com"
             />
-          </div>
-          {errors.email && (
-            <p className="text-red-600 text-sm mt-1.5 font-medium">
-              {errors.email.message}
-            </p>
           )}
-        </div>
+        />
 
         {/* Passcode */}
-        <div>
-          <div className="flex items-center justify-between mb-2">
-            <label className="text-xs font-bold text-black uppercase tracking-wider">
-              Passcode
-            </label>
-            <button
-              type="button"
-              onClick={() => navigate({ to: "/register" })}
-              className="text-xs font-medium text-black hover:underline cursor-pointer"
-            >
-              Recover
-            </button>
-          </div>
-          <div className="relative">
-            <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none" />
-            <Input
-              {...register("password")}
+        <form.Field
+          name="password"
+          children={(field) => (
+            <AuthFormField
+              label="Passcode"
+              field={field}
+              icon={Lock}
               type="password"
-              className="pl-10 h-12 border-2 border-black rounded-none bg-gray-50 text-black placeholder:text-gray-400 focus-visible:ring-0 focus-visible:border-black focus-visible:shadow-[4px_4px_0px_#00ff87] transition-shadow"
               placeholder="••••••••"
             />
-          </div>
-          {errors.password && (
-            <p className="text-red-600 text-sm mt-1.5 font-medium">
-              {errors.password.message}
-            </p>
           )}
-        </div>
+        />
+
+        {login.error && (
+          <div className="border-2 border-red-600 bg-red-50 px-3 py-2 mt-2">
+            <p className="text-sm text-red-700 font-semibold">
+              {getAuthErrorMessage(login.error)}
+            </p>
+          </div>
+        )}
 
         {/* Submit */}
-        <Button
-          type="submit"
-          disabled={login.isPending}
-          className="w-full h-12 cursor-pointer bg-[#00ff87] text-black hover:bg-[#00e67a] border-2 border-black rounded-none font-bold uppercase tracking-wider shadow-[4px_4px_0px_#000000] hover:shadow-[2px_2px_0px_#000000] hover:translate-x-[2px] hover:translate-y-[2px] active:shadow-none active:translate-x-[4px] active:translate-y-[4px] transition-all text-base disabled:cursor-not-allowed"
-        >
-          {login.isPending ? (
-            "AUTHENTICATING..."
-          ) : (
-            <>
-              ENTER
-              <ArrowRight className="ml-2 w-5 h-5" />
-            </>
+        <form.Subscribe
+          selector={(state) => [state.canSubmit, state.isSubmitting]}
+          children={([canSubmit, isSubmitting]) => (
+            <Button
+              type="submit"
+              variant="success"
+              size="lg"
+              disabled={login.isPending || isSubmitting || !canSubmit}
+              className="w-full font-bold tracking-wider"
+            >
+              {login.isPending || isSubmitting ? (
+                "AUTHENTICATING..."
+              ) : (
+                <>
+                  ENTER
+                  <ArrowRight className="ml-2 w-5 h-5" />
+                </>
+              )}
+            </Button>
           )}
-        </Button>
+        />
       </form>
 
       <div className="h-px bg-black mt-8 mb-5" />
 
       <p className="text-center text-xs font-medium text-black">
         No access protocol established?{" "}
-        <button
+        <Button
           type="button"
+          variant="link"
           onClick={() => navigate({ to: "/register" })}
-          className="font-bold underline hover:text-[#00ff87] transition-colors cursor-pointer"
         >
           REGISTER ENTITY
-        </button>
+        </Button>
       </p>
     </div>
-  )
+  );
+}
+
+function getAuthErrorMessage(error: unknown) {
+  if (!error) return null;
+
+  if (axios.isAxiosError(error)) {
+    const status = error.response?.status;
+
+    switch (status) {
+      case 401:
+      case 403:
+        return "Incorrect email or password. Please try again.";
+      case 400:
+        return "Please check your details and try again.";
+      case 429:
+        return "Too many attempts. Please wait a moment and try again.";
+      default:
+        if (status && status >= 500) {
+          return "Server issue right now. Please try again shortly.";
+        }
+        if (!status) {
+          return "Network error. Please check your connection and try again.";
+        }
+    }
+
+    const data = error.response?.data;
+    if (typeof data === "string" && data.toLowerCase().includes("invalid")) {
+      return "Incorrect email or password. Please try again.";
+    }
+  }
+
+  return "Something went wrong while signing in. Please try again.";
 }

@@ -193,11 +193,11 @@ export function DotGrid({
       ro = new ResizeObserver(buildGrid)
       if (wrapperRef.current) ro.observe(wrapperRef.current)
     } else {
-      window.addEventListener("resize", buildGrid)
+      (window as Window).addEventListener("resize", buildGrid)
     }
     return () => {
       if (ro) ro.disconnect()
-      else window.removeEventListener("resize", buildGrid)
+      else (window as Window).removeEventListener("resize", buildGrid)
     }
   }, [buildGrid])
 
@@ -284,7 +284,7 @@ export function DotGrid({
       }
     }
 
-    const throttledMove = throttle(onMove, 50)
+    const throttledMove = throttle(onMove as any, 50)
     window.addEventListener("mousemove", throttledMove, { passive: true })
     window.addEventListener("click", onClick)
 

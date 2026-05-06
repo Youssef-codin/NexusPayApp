@@ -5,6 +5,7 @@ export type NexusPayLogoType = "icon" | "wordmark" | "full";
 interface NexusPayLogoProps {
   size?: number;
   type?: NexusPayLogoType;
+  className?: string;
 }
 
 export const ICON_BACKGROUND = "#000000";
@@ -13,10 +14,11 @@ export const ICON_CENTER_DOT = "#000000";
 export const TEXT_NEXUS = "#000000";
 export const TEXT_PAY = "#00ff87";
 
-const Mark: FC<{ size: number }> = ({ size }) => (
+const Mark: FC<{ size: number; className?: string }> = ({ size, className }) => (
   <svg
     width={size}
     height={size}
+    className={className}
     viewBox="0 0 24 24"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
@@ -70,10 +72,11 @@ const Full: FC<{ size: number }> = ({ size }) => (
 export const NexusPayLogo: FC<NexusPayLogoProps> = ({
   size = 48,
   type = "full",
+  className,
 }) => {
   switch (type) {
     case "icon":
-      return <Mark size={size} />;
+      return <Mark size={size} className={className} />;
     case "wordmark":
       return <Wordmark height={size * 0.65} />;
     case "full":

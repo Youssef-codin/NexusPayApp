@@ -1,34 +1,19 @@
-import { createFileRoute } from "@tanstack/react-router"
-import { LoginForm } from "#/features/auth/LoginForm"
-import { DotGrid } from "#/components/DotGrid"
-import { useDebouncedHover } from "#/hooks/use-debounced-hover"
+import { createFileRoute } from "@tanstack/react-router";
+import { LoginForm } from "#/features/auth/LoginForm";
+import { DotGrid } from "#/components/DotGrid";
+import { useDebouncedHover } from "#/hooks/use-debounced-hover";
+import { SecureGateway } from "#/features/dashboard/SecureGateway";
 
 export const Route = createFileRoute("/_public/login")({
   component: Login,
-})
+});
 
 function Login() {
-  const { hovered: cardHovered, hoverHandlers } = useDebouncedHover(120)
+  const { hovered: cardHovered, hoverHandlers } = useDebouncedHover(120);
 
   return (
     <div className="min-h-screen bg-[#fcf8ff] relative overflow-hidden flex items-center justify-center">
-      <div className="absolute top-8 left-8 md:top-16 md:left-16 select-none pointer-events-none z-0">
-        <div
-          className="text-5xl md:text-7xl font-bold leading-[0.9] tracking-tighter"
-          style={{
-            color: "rgba(156, 163, 175, 0.2)",
-            textShadow: `
-              0 0 30px rgba(0, 255, 135, 0.5),
-              0 0 60px rgba(0, 255, 135, 0.35),
-              0 0 100px rgba(0, 255, 135, 0.2)
-            `,
-          }}
-        >
-          SECURE
-          <br />
-          GATEWAY
-        </div>
-      </div>
+      <SecureGateway />
 
       <DotGrid
         dotSize={5}
@@ -43,9 +28,6 @@ function Login() {
         disabled={cardHovered}
       />
 
-      <div className="absolute top-1/2 right-0 -translate-y-1/2 w-[400px] h-[600px] bg-gradient-to-bl from-purple-200/60 via-pink-100/40 to-transparent rounded-l-full blur-[80px] pointer-events-none z-1" />
-      <div className="absolute bottom-0 left-1/4 w-[300px] h-[300px] bg-[#00ff87]/10 rounded-full blur-[100px] pointer-events-none z-[1]" />
-
       <div
         className="relative z-10 w-full max-w-[420px] mx-4"
         {...hoverHandlers}
@@ -55,5 +37,5 @@ function Login() {
         </div>
       </div>
     </div>
-  )
+  );
 }

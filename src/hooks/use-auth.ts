@@ -42,9 +42,12 @@ export function useUser() {
 
   return useQuery({
     queryKey: queryKeys.auth.user(),
-    queryFn: () => authApi.test(),
+    queryFn: async () => {
+      const user = await authApi.test()
+      setUser(user)
+      return user
+    },
     enabled: !!useAuthStore.getState().accessToken,
     staleTime: 1000 * 60 * 5,
-    onSuccess: (user) => setUser(user),
   })
 }
