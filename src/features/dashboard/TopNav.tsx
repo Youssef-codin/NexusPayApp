@@ -59,7 +59,7 @@ function IconButton({
 export function TopNav() {
   return (
     <header className="bg-black text-white">
-      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-8 px-6">
+      <div className="mx-auto flex h-16 max-w-[1600px] items-center justify-between gap-8 px-4 sm:px-8">
         <div className="flex items-center gap-2 text-white">
           <span className="flex h-8 w-8 items-center justify-center bg-[#00ff87] text-black">
             <NexusPayLogo type="icon" size={20} />

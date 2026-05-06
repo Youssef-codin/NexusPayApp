@@ -16,9 +16,11 @@ function Dashboard() {
 			/>
 			<div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
 				<div className="lg:col-span-2">
-					<RecentActivity items={mockDashboard.recent_activity} />
+					<RecentActivity items={mockDashboard.recent_activity} totalCount={58} />
 				</div>
-				<MonthSummary summary={mockDashboard.month_summary} />
+				<div className="self-start">
+					<MonthSummary summary={mockDashboard.month_summary} />
+				</div>
 			</div>
 		</div>
 	);

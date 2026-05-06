@@ -21,7 +21,8 @@ const buttonVariants = cva(
         link: "text-oklch(0.214 0.009 43.1) underline underline-offset-4 hover:underline hover:text-[#00ff87] dark:text-oklch(0.922 0.005 34.3) dark:hover:text-[#00ff87]",
         success:
           "bg-[#00ff87] text-black border-2 border-black shadow-[4px_4px_0px_#000000] hover:bg-[#00e67a] hover:shadow-[2px_2px_0px_#000000] hover:translate-x-[2px] hover:translate-y-[2px] active:shadow-none active:translate-x-[4px] active:translate-y-[4px]",
-        dark: "bg-black text-white border-2 border-black hover:-translate-y-0.5",
+        dark: "bg-black text-white border-2 border-black shadow-[4px_4px_0px_#000000] hover:bg-neutral-900 hover:shadow-[2px_2px_0px_#000000] hover:translate-x-[2px] hover:translate-y-[2px] active:shadow-none active:translate-x-[4px] active:translate-y-[4px]",
+        white: "bg-white text-black border-2 border-black shadow-[4px_4px_0px_#000000] hover:bg-neutral-50 hover:shadow-[2px_2px_0px_#000000] hover:translate-x-[2px] hover:translate-y-[2px] active:shadow-none active:translate-x-[4px] active:translate-y-[4px]",
       },
       size: {
         default:
