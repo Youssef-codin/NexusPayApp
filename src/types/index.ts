@@ -11,11 +11,19 @@ export interface Wallet {
   created_at: string
 }
 
+export interface TransferUser {
+  id: string
+  full_name: string
+}
+
 export interface Transfer {
   id: string
   from_wallet_id: string
+  from_user: TransferUser
   to_wallet_id: string
+  to_user: TransferUser
   amount_in_piastres: number
+  direction: "debit" | "credit"
   status: "completed" | "pending" | "failed"
   note?: string
   created_at: string

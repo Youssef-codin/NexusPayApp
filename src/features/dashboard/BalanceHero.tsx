@@ -23,7 +23,7 @@ export function BalanceHero({ balanceInPiastres }: BalanceHeroProps) {
     <section className="relative overflow-hidden bg-[#00ff87] shadow-[8px_8px_0px_#000000]">
       {/* Background Wallet Icon */}
       <div className="pointer-events-none absolute bottom-0 right-0 hidden translate-x-1/4 translate-y-1/4 text-black/5 md:block">
-        <Wallet className="size-[400px] -rotate-12 stroke-[1]" />
+        <Wallet className="size-100 -rotate-12 stroke-1" />
       </div>
 
       <div className="relative flex flex-col gap-10 p-10 md:flex-row md:items-center md:justify-between">
@@ -48,7 +48,7 @@ export function BalanceHero({ balanceInPiastres }: BalanceHeroProps) {
             variant="dark"
             className="h-12 text-xs font-black tracking-widest"
           >
-            <Plus className="mr-2 h-5 w-5 stroke-[3]" />
+            <Plus className="mr-2 h-5 w-5 stroke-3" />
             DEPOSIT
           </Button>
           <Button
@@ -56,7 +56,7 @@ export function BalanceHero({ balanceInPiastres }: BalanceHeroProps) {
             variant="white"
             className="h-12 border-white text-xs font-black tracking-widest hover:border-neutral-50"
           >
-            <Send className="mr-2 h-5 w-5 -rotate-12 stroke-[3]" />
+            <Send className="mr-2 h-5 w-5 -rotate-12 stroke-3" />
             SEND
           </Button>
         </div>

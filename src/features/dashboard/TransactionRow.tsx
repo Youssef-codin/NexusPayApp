@@ -1,10 +1,10 @@
 import { Globe, Store, User } from "lucide-react"
 import { formatCurrency } from "#/lib/formatters"
 import { cn } from "#/lib/utils"
-import type { MockActivityItem } from "#/lib/mock-data"
+import type { ActivityItem } from "#/types/dashboard"
 
 interface TransactionRowProps {
-  item: MockActivityItem
+  item: ActivityItem
 }
 
 const KIND_ICON = {
@@ -13,10 +13,11 @@ const KIND_ICON = {
   subscription: Globe,
 } as const
 
-const STATUS_LABEL: Record<MockActivityItem["status"], string> = {
+const STATUS_LABEL: Record<ActivityItem["status"], string> = {
   cleared: "Cleared",
   received: "Received",
-  subscription: "Subscription",
+  pending: "Pending",
+  failed: "Failed",
 }
 
 function formatOccurredAt(iso: string): string {
@@ -36,9 +37,9 @@ function formatOccurredAt(iso: string): string {
 
 export function TransactionRow({ item }: TransactionRowProps) {
   const Icon = KIND_ICON[item.kind]
-  const isPositive = item.amount_in_piastres > 0
+  const isPositive = item.amountInPiastres > 0
   const sign = isPositive ? "+" : "-"
-  const absAmount = Math.abs(item.amount_in_piastres)
+  const absAmount = Math.abs(item.amountInPiastres)
 
   return (
     <div className="flex items-center gap-4 border-2 border-black bg-white p-4 shadow-[4px_4px_0px_#000000]">
@@ -51,7 +52,7 @@ export function TransactionRow({ item }: TransactionRowProps) {
           {item.name}
         </p>
         <p className="mt-1 text-xs font-medium text-neutral-500">
-          {formatOccurredAt(item.occurred_at)}
+          {formatOccurredAt(item.occurredAt)}
         </p>
       </div>
 
