@@ -3,6 +3,7 @@ import { Button } from "#/components/ui/button";
 
 interface BalanceHeroProps {
   balanceInPiastres: number;
+  onSend?: () => void;
 }
 
 function splitAmount(piastres: number): { integer: string; decimal: string } {
@@ -16,7 +17,7 @@ function splitAmount(piastres: number): { integer: string; decimal: string } {
   return { integer, decimal };
 }
 
-export function BalanceHero({ balanceInPiastres }: BalanceHeroProps) {
+export function BalanceHero({ balanceInPiastres, onSend }: BalanceHeroProps) {
   const { integer, decimal } = splitAmount(balanceInPiastres);
 
   return (
@@ -54,6 +55,7 @@ export function BalanceHero({ balanceInPiastres }: BalanceHeroProps) {
           <Button
             type="button"
             variant="white"
+            onClick={onSend}
             className="h-12 border-white text-xs font-black tracking-widest hover:border-neutral-50"
           >
             <Send className="mr-2 h-5 w-5 -rotate-12 stroke-3" />

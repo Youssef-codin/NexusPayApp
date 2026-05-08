@@ -72,5 +72,6 @@ export const scheduledApi = {
 
 export const userApi = {
   search: (name: string) =>
-    client.get<UserSearchResult[]>("/users", { params: { name } }),
+    client.get<{ Users: UserSearchResult[] }>("/users", { params: { name } })
+      .then((res) => res.Users ?? []),
 }

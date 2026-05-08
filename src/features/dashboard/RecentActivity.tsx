@@ -1,22 +1,22 @@
-import { useState } from "react"
-import { Link } from "@tanstack/react-router"
-import { ChevronLeft, ChevronRight, Inbox, Wallet } from "lucide-react"
-import { Button } from "#/components/ui/button"
-import { TransactionRow } from "./TransactionRow"
-import type { ActivityItem } from "#/types/dashboard"
+import { useState } from 'react';
+import { Link } from '@tanstack/react-router';
+import { ChevronLeft, ChevronRight, Inbox, Wallet } from 'lucide-react';
+import { Button } from '#/components/ui/button';
+import { TransactionRow } from './TransactionRow';
+import type { ActivityItem } from '#/types/dashboard';
 
 interface RecentActivityProps {
-  items: ActivityItem[]
-  totalCount?: number
+  items: ActivityItem[];
+  totalCount?: number;
 }
 
-const PAGE_SIZE = 10
+const PAGE_SIZE = 10;
 
 export function RecentActivity({ items, totalCount = 0 }: RecentActivityProps) {
-  const [page, setPage] = useState(1)
-  const totalPages = Math.ceil(items.length / PAGE_SIZE)
-  const startIndex = (page - 1) * PAGE_SIZE
-  const paginatedItems = items.slice(startIndex, startIndex + PAGE_SIZE)
+  const [page, setPage] = useState(1);
+  const totalPages = Math.ceil(items.length / PAGE_SIZE);
+  const startIndex = (page - 1) * PAGE_SIZE;
+  const paginatedItems = items.slice(startIndex, startIndex + PAGE_SIZE);
 
   if (items.length === 0) {
     return (
@@ -50,7 +50,7 @@ export function RecentActivity({ items, totalCount = 0 }: RecentActivityProps) {
           </div>
         </div>
       </section>
-    )
+    );
   }
 
   return (
@@ -78,8 +78,8 @@ export function RecentActivity({ items, totalCount = 0 }: RecentActivityProps) {
               variant="ghost"
               size="xs"
               onClick={() => {
-                setPage((p) => Math.max(1, p - 1))
-                window.scrollTo({ top: 0, behavior: "smooth" })
+                setPage((p) => Math.max(1, p - 1));
+                window.scrollTo({ top: 0, behavior: 'smooth' });
               }}
               disabled={page === 1}
             >
@@ -94,8 +94,8 @@ export function RecentActivity({ items, totalCount = 0 }: RecentActivityProps) {
               variant="ghost"
               size="xs"
               onClick={() => {
-                setPage((p) => Math.min(totalPages, p + 1))
-                window.scrollTo({ top: 0, behavior: "smooth" })
+                setPage((p) => Math.min(totalPages, p + 1));
+                window.scrollTo({ top: 0, behavior: 'smooth' });
               }}
               disabled={page === totalPages}
             >
@@ -106,11 +106,10 @@ export function RecentActivity({ items, totalCount = 0 }: RecentActivityProps) {
         )}
 
         <div className="mt-2 text-center text-xs font-medium uppercase tracking-widest text-neutral-600">
-          Showing {startIndex + 1}-{Math.min(startIndex + PAGE_SIZE, items.length)} of{" "}
-          {totalCount} transactions
+          Showing {startIndex + 1}-{Math.min(startIndex + PAGE_SIZE, items.length)} of {totalCount}{' '}
+          transactions
         </div>
       </div>
     </section>
-  )
+  );
 }
-
