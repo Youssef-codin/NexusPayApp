@@ -58,4 +58,3 @@ export function computeMonthSummary(transfers: Transfer[]): IMonthSummary {
     transactionsCount: thisMonth.length,
   };
 }
-

@@ -31,7 +31,11 @@ function Dashboard() {
   return (
     <div className="space-y-8">
       <BalanceHero balanceInPiastres={wallet.balance} onSend={() => setSendOpen(true)} />
-      <SendMoneyModal isOpen={sendOpen} onClose={() => setSendOpen(false)} balanceInPiastres={wallet.balance} />
+      <SendMoneyModal
+        isOpen={sendOpen}
+        onClose={() => setSendOpen(false)}
+        balanceInPiastres={wallet.balance}
+      />
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
         <div className="lg:col-span-2">
           <RecentActivity items={activity} totalCount={transfers.length} />

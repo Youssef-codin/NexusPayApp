@@ -28,4 +28,3 @@ export interface IMonthSummary {
   totalReceivedInPiastres: number;
   transactionsCount: number;
 }
-

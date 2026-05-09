@@ -1,6 +1,11 @@
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
-import { RouterProvider, createRouter } from "@tanstack/react-router"
-import { routeTree } from "./routeTree.gen"
+import { useState, useLayoutEffect } from 'react';
+import axios from 'axios';
+import { decodeJwt } from 'jose';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { RouterProvider, createRouter } from '@tanstack/react-router';
+import { routeTree } from './routeTree.gen';
+import { LoadingSpinner } from './components/LoadingSpinner';
+import { useAuthStore } from './store/auth-store';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -9,27 +14,45 @@ const queryClient = new QueryClient({
       retry: 1,
     },
   },
-})
+});
 
 const router = createRouter({
   routeTree,
   context: {
     queryClient,
   },
-  defaultPreload: "intent",
+  defaultPreload: 'intent',
   scrollRestoration: true,
-})
+});
 
-declare module "@tanstack/react-router" {
+declare module '@tanstack/react-router' {
   interface Register {
-    router: typeof router
+    router: typeof router;
   }
 }
 
 export function App() {
+  const [ready, setReady] = useState(false);
+
+  useLayoutEffect(() => {
+    axios
+      .post('http://localhost:3000/auth/refresh', {}, { withCredentials: true })
+      .then((res) => {
+        const { jwt_token } = res.data;
+        const id = decodeJwt(jwt_token).sub as string;
+        useAuthStore.getState().login(jwt_token, { id, email: '', full_name: '' });
+      })
+      .catch(() => {
+        // No valid session — router will redirect to login
+      })
+      .finally(() => setReady(true));
+  }, []);
+
+  if (!ready) return <LoadingSpinner />;
+
   return (
     <QueryClientProvider client={queryClient}>
       <RouterProvider router={router} />
     </QueryClientProvider>
-  )
+  );
 }

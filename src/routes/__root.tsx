@@ -1,16 +1,16 @@
-import { Link, Outlet, createRootRoute } from "@tanstack/react-router"
-import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools"
-import { TanStackDevtools } from "@tanstack/react-devtools"
-import { ErrorFallback } from "#/components/ErrorFallback"
-import { Button } from "#/components/ui/button"
+import { Link, Outlet, createRootRoute } from '@tanstack/react-router';
+import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools';
+import { TanStackDevtools } from '@tanstack/react-devtools';
+import { ErrorFallback } from '#/components/ErrorFallback';
+import { Button } from '#/components/ui/button';
 
-import "../styles.css"
+import '../styles.css';
 
 export const Route = createRootRoute({
   component: RootComponent,
   errorComponent: RootErrorBoundary,
   notFoundComponent: RootNotFound,
-})
+});
 
 function RootComponent() {
   return (
@@ -18,31 +18,25 @@ function RootComponent() {
       <Outlet />
       <TanStackDevtools
         config={{
-          position: "bottom-right",
+          position: 'bottom-right',
         }}
         plugins={[
           {
-            name: "TanStack Router",
+            name: 'TanStack Router',
             render: <TanStackRouterDevtoolsPanel />,
           },
         ]}
       />
     </>
-  )
+  );
 }
 
-function RootErrorBoundary({
-  error,
-  reset,
-}: {
-  error: Error
-  reset: () => void
-}) {
+function RootErrorBoundary({ error, reset }: { error: Error; reset: () => void }) {
   return (
     <div className="min-h-screen bg-[#fcf8ff] flex items-center justify-center p-6">
       <ErrorFallback error={error} resetError={reset} />
     </div>
-  )
+  );
 }
 
 function RootNotFound() {
@@ -57,7 +51,10 @@ function RootNotFound() {
           The route you requested does not exist or is no longer available.
         </p>
         <div className="flex flex-col gap-3">
-          <Button asChild className="bg-[#00ff87] text-black hover:bg-[#00cc6a] border-2 border-black">
+          <Button
+            asChild
+            className="bg-[#00ff87] text-black hover:bg-[#00cc6a] border-2 border-black"
+          >
             <Link to="/">Go Home</Link>
           </Button>
           <Button asChild variant="outline" className="border-2 border-black text-black">
@@ -66,5 +63,5 @@ function RootNotFound() {
         </div>
       </div>
     </div>
-  )
+  );
 }

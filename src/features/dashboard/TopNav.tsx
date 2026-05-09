@@ -1,39 +1,35 @@
-import { Link } from "@tanstack/react-router"
-import { Bell, HelpCircle, User } from "lucide-react"
-import { NexusPayLogo } from "#/components/NexusPayLogo"
-import { Button } from "#/components/ui/button"
-import { cn } from "#/lib/utils"
+import { Link } from '@tanstack/react-router';
+import { Bell, HelpCircle, User } from 'lucide-react';
+import { NexusPayLogo } from '#/components/NexusPayLogo';
+import { Button } from '#/components/ui/button';
+import { cn } from '#/lib/utils';
 
 interface NavItem {
-  label: string
-  to: string
-  active?: boolean
+  label: string;
+  to: string;
+  active?: boolean;
 }
 
 const navItems: NavItem[] = [
-  { label: "Dashboard", to: "/", active: true },
-  { label: "Payments", to: "/" },
-  { label: "Analytics", to: "/" },
-  { label: "Settings", to: "/" },
-]
+  { label: 'Dashboard', to: '/', active: true },
+  { label: 'Payments', to: '/' },
+  { label: 'Analytics', to: '/' },
+  { label: 'Settings', to: '/' },
+];
 
 function NavLink({ label, to, active }: NavItem) {
   return (
     <Link
       to={to}
       className={cn(
-        "relative px-1 pb-1 text-xs font-medium uppercase tracking-[0.2em] transition-colors",
-        active
-          ? "text-white"
-          : "text-white/50 hover:text-white"
+        'relative px-1 pb-1 text-xs font-medium uppercase tracking-[0.2em] transition-colors',
+        active ? 'text-white' : 'text-white/50 hover:text-white'
       )}
     >
       {label}
-      {active && (
-        <span className="absolute -bottom-1 left-0 right-0 h-1 bg-[#00ff87]" />
-      )}
+      {active && <span className="absolute -bottom-1 left-0 right-0 h-1 bg-[#00ff87]" />}
     </Link>
-  )
+  );
 }
 
 function IconButton({
@@ -41,19 +37,15 @@ function IconButton({
   ariaLabel,
   filled = false,
 }: {
-  children: React.ReactNode
-  ariaLabel: string
-  filled?: boolean
+  children: React.ReactNode;
+  ariaLabel: string;
+  filled?: boolean;
 }) {
   return (
-    <Button
-      type="button"
-      aria-label={ariaLabel}
-      size={filled ? "icon-nav-filled" : "icon-nav"}
-    >
+    <Button type="button" aria-label={ariaLabel} size={filled ? 'icon-nav-filled' : 'icon-nav'}>
       {children}
     </Button>
-  )
+  );
 }
 
 export function TopNav() {
@@ -88,5 +80,5 @@ export function TopNav() {
         </div>
       </div>
     </header>
-  )
+  );
 }

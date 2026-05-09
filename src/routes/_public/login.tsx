@@ -1,10 +1,10 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { LoginForm } from "#/features/auth/LoginForm";
-import { DotGrid } from "#/components/DotGrid";
-import { useDebouncedHover } from "#/hooks/use-debounced-hover";
-import { SecureGateway } from "#/features/dashboard/SecureGateway";
+import { createFileRoute } from '@tanstack/react-router';
+import { LoginForm } from '#/features/auth/LoginForm';
+import { DotGrid } from '#/components/DotGrid';
+import { useDebouncedHover } from '#/hooks/use-debounced-hover';
+import { SecureGateway } from '#/features/dashboard/SecureGateway';
 
-export const Route = createFileRoute("/_public/login")({
+export const Route = createFileRoute('/_public/login')({
   component: Login,
 });
 
@@ -28,10 +28,7 @@ function Login() {
         disabled={cardHovered}
       />
 
-      <div
-        className="relative z-10 w-full max-w-[420px] mx-4"
-        {...hoverHandlers}
-      >
+      <div className="relative z-10 w-full max-w-[420px] mx-4" {...hoverHandlers}>
         <div className="bg-white border-2 border-black shadow-[6px_6px_0px_#000000]">
           <LoginForm />
         </div>

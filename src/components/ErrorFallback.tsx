@@ -1,8 +1,8 @@
-import { Button } from "#/components/ui/button"
+import { Button } from '#/components/ui/button';
 
 interface ErrorFallbackProps {
-  error: Error
-  resetError?: () => void
+  error: Error;
+  resetError?: () => void;
 }
 
 export function ErrorFallback({ error, resetError }: ErrorFallbackProps) {
@@ -11,7 +11,7 @@ export function ErrorFallback({ error, resetError }: ErrorFallbackProps) {
       <div className="border-4 border-black bg-white p-8 max-w-md w-full">
         <h2 className="text-2xl font-bold text-black mb-4">Error</h2>
         <p className="text-neutral-600 mb-6 font-medium">
-          {error.message || "Something went wrong"}
+          {error.message || 'Something went wrong'}
         </p>
         {resetError && (
           <Button
@@ -23,5 +23,5 @@ export function ErrorFallback({ error, resetError }: ErrorFallbackProps) {
         )}
       </div>
     </div>
-  )
+  );
 }

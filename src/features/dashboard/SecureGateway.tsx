@@ -4,7 +4,7 @@ export function SecureGateway() {
       <div
         className="text-5xl md:text-7xl font-bold leading-[0.9] tracking-tighter"
         style={{
-          color: "rgba(156, 163, 175, 0.2)",
+          color: 'rgba(156, 163, 175, 0.2)',
           textShadow: `
             0 0 30px rgba(0, 255, 135, 0.5),
             0 0 60px rgba(0, 255, 135, 0.35),
@@ -17,5 +17,5 @@ export function SecureGateway() {
         GATEWAY
       </div>
     </div>
-  )
+  );
 }

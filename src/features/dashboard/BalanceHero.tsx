@@ -1,5 +1,5 @@
-import { Plus, Send, Wallet } from "lucide-react";
-import { Button } from "#/components/ui/button";
+import { Plus, Send, Wallet } from 'lucide-react';
+import { Button } from '#/components/ui/button';
 
 interface BalanceHeroProps {
   balanceInPiastres: number;
@@ -8,12 +8,12 @@ interface BalanceHeroProps {
 
 function splitAmount(piastres: number): { integer: string; decimal: string } {
   const egp = piastres / 100;
-  const formatter = new Intl.NumberFormat("en-US", {
+  const formatter = new Intl.NumberFormat('en-US', {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
   });
   const formatted = formatter.format(egp);
-  const [integer, decimal = "00"] = formatted.split(".");
+  const [integer, decimal = '00'] = formatted.split('.');
   return { integer, decimal };
 }
 
@@ -34,21 +34,13 @@ export function BalanceHero({ balanceInPiastres, onSend }: BalanceHeroProps) {
           </p>
           <div className="flex items-baseline leading-none text-black">
             <span className="text-5xl font-black opacity-30">EGP</span>
-            <span className="ml-5 text-7xl font-bold tracking-tighter md:text-8xl">
-              {integer}
-            </span>
-            <span className="ml-1 text-4xl font-bold opacity-30">
-              .{decimal}
-            </span>
+            <span className="ml-5 text-7xl font-bold tracking-tighter md:text-8xl">{integer}</span>
+            <span className="ml-1 text-4xl font-bold opacity-30">.{decimal}</span>
           </div>
         </div>
 
         <div className="grid w-full grid-cols-2 gap-6 md:w-[320px]">
-          <Button
-            type="button"
-            variant="dark"
-            className="h-12 text-xs font-black tracking-widest"
-          >
+          <Button type="button" variant="dark" className="h-12 text-xs font-black tracking-widest">
             <Plus className="mr-2 h-5 w-5 stroke-3" />
             DEPOSIT
           </Button>

@@ -1,6 +1,6 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute } from '@tanstack/react-router';
 
-export const Route = createFileRoute("/_auth/scheduled")({
+export const Route = createFileRoute('/_auth/scheduled')({
   component: Scheduled,
 });
 
@@ -16,4 +16,3 @@ function Scheduled() {
     </div>
   );
 }
-

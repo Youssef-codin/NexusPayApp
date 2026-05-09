@@ -1,80 +1,80 @@
 export interface User {
-  id: string
-  email: string
-  full_name: string
+  id: string;
+  email: string;
+  full_name: string;
 }
 
 export interface Wallet {
-  id: string
-  user_id: string
-  balance: number
-  created_at: string
+  id: string;
+  user_id: string;
+  balance: number;
+  created_at: string;
 }
 
 export interface TransferUser {
-  id: string
-  full_name: string
+  id: string;
+  full_name: string;
 }
 
 export interface Transfer {
-  id: string
-  from_wallet_id: string
-  from_user: TransferUser
-  to_wallet_id: string
-  to_user: TransferUser
-  amount_in_piastres: number
-  direction: "debit" | "credit"
-  status: "completed" | "pending" | "failed"
-  note?: string
-  created_at: string
+  id: string;
+  from_wallet_id: string;
+  from_user: TransferUser;
+  to_wallet_id: string;
+  to_user: TransferUser;
+  amount_in_piastres: number;
+  direction: 'debit' | 'credit';
+  status: 'completed' | 'pending' | 'failed';
+  note?: string;
+  created_at: string;
 }
 
 export interface TransferListResponse {
-  from_wallet_id: string
-  transfers: Transfer[]
+  from_wallet_id: string;
+  transfers: Transfer[];
 }
 
 export interface TransferDetailResponse {
-  transfer: Transfer
+  transfer: Transfer;
 }
 
 export interface ScheduledTransfer {
-  id: string
-  transfer_id: string
-  scheduled_at: string
-  executed_at: string | null
-  created_at: string
+  id: string;
+  transfer_id: string;
+  scheduled_at: string;
+  executed_at: string | null;
+  created_at: string;
 }
 
 export interface ScheduledTransferListResponse {
-  scheduled_transfers: ScheduledTransfer[]
+  scheduled_transfers: ScheduledTransfer[];
 }
 
 export interface AuthResponse {
-  email: string
-  full_name: string
-  jwt_token: string
-  refresh_token: string
+  email: string;
+  full_name: string;
+  jwt_token: string;
+  refresh_token: string;
 }
 
 export interface RefreshResponse {
-  jwt_token: string
-  refresh_token: string
+  jwt_token: string;
+  refresh_token: string;
 }
 
 export interface TopUpResponse {
-  client_secret: string
-  amount: number
-  currency: string
+  client_secret: string;
+  amount: number;
+  currency: string;
 }
 
 export interface UserSearchResult {
-  id: string
-  full_name: string
+  id: string;
+  full_name: string;
 }
 
 export interface ApiError {
-  error: string
-  message: string
-  status_code: number
+  error: string;
+  message: string;
+  status_code: number;
 }
