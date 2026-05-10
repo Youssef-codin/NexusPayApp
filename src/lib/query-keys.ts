@@ -20,4 +20,8 @@ export const queryKeys = {
     create: () => [...queryKeys.scheduled.all, 'create'] as const,
     cancel: (id: string) => [...queryKeys.scheduled.all, 'cancel', id] as const,
   },
+  payments: {
+    all: ['payments'] as const,
+    list: () => [...queryKeys.payments.all, 'list'] as const,
+  },
 };

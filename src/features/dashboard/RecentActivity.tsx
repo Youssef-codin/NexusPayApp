@@ -5,6 +5,18 @@ import { Button } from '#/components/ui/button';
 import { TransactionRow } from './TransactionRow';
 import type { ActivityItem } from '#/types/dashboard';
 
+function ViewAllLink() {
+  return (
+    <Link
+      to="/payments"
+      search={{ tab: 'transfers' }}
+      className="font-mono text-[10px] font-bold uppercase tracking-[0.14em] text-neutral-400 underline transition-colors hover:text-black"
+    >
+      View All
+    </Link>
+  );
+}
+
 interface RecentActivityProps {
   items: ActivityItem[];
   totalCount?: number;
@@ -59,9 +71,7 @@ export function RecentActivity({ items, totalCount = 0 }: RecentActivityProps) {
         <h2 className="text-xl font-semibold uppercase tracking-tight text-black">
           Recent Activity
         </h2>
-        <Button type="button" variant="link" size="xs">
-          View All
-        </Button>
+        <ViewAllLink />
       </header>
 
       <div className="mt-5">

@@ -20,6 +20,7 @@ export interface ActivityItem {
   kind: ActivityKind;
   amountInPiastres: number;
   status: ActivityStatus;
+  note?: TransferNote;
   occurredAt: string;
 }
 

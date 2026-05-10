@@ -167,6 +167,41 @@ bun run dev
 
 ---
 
+## Testing Payments (Stripe)
+
+The app uses Stripe for wallet top-ups. In development, use Stripe's test card numbers — no real money is charged.
+
+### Test Cards
+
+| Card Number | Result |
+|---|---|
+| `4242 4242 4242 4242` | Success |
+| `4000 0000 0000 9995` | Declined (insufficient funds) |
+| `4000 0027 6000 3184` | Requires 3D Secure auth |
+
+**Expiry**: any future date (e.g. `12/34`)
+**CVC**: any 3 digits (e.g. `123`)
+**ZIP**: any 5 digits (e.g. `12345`)
+
+### How to top up
+
+1. Go to the dashboard and click **Add Money**
+2. Enter an amount (in EGP)
+3. Enter a test card number above
+4. Complete the Stripe payment form
+
+### Environment Setup
+
+Copy `.env.example` to `.env` and fill in your Stripe test keys:
+
+```bash
+cp .env.example .env
+```
+
+Get your test keys from the [Stripe Dashboard](https://dashboard.stripe.com/test/apikeys) (make sure you're in **Test mode**).
+
+---
+
 ## Notes for LLMs
 
 This project uses specific patterns. See `AGENTS.md` (if exists) or remember:

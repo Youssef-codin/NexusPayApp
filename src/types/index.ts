@@ -43,6 +43,17 @@ export interface ScheduledTransfer {
   transfer_id: string;
   scheduled_at: string;
   executed_at: string | null;
+  deleted_at: string | null;
+  created_at: string;
+}
+
+export interface Payment {
+  id: string;
+  amount: number;
+  type: 'credit' | 'debit';
+  direction: 'incoming' | 'outgoing';
+  status: 'completed' | 'pending' | 'failed';
+  description: string;
   created_at: string;
 }
 

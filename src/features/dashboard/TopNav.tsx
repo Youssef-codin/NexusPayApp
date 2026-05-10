@@ -1,29 +1,33 @@
-import { Link } from '@tanstack/react-router';
+import { Link, useRouterState } from '@tanstack/react-router';
 import { Bell, HelpCircle, User } from 'lucide-react';
 import { NexusPayLogo } from '#/components/NexusPayLogo';
 import { Button } from '#/components/ui/button';
 import { cn } from '#/lib/utils';
 
-interface NavItem {
-  label: string;
-  to: string;
-  active?: boolean;
-}
+const NAV_ITEMS = [
+  { label: 'Dashboard', to: '/' as const },
+  { label: 'Payments', to: '/payments' as const },
+  { label: 'Analytics', to: '/' as const },
+  { label: 'Settings', to: '/' as const },
+] as const;
 
-const navItems: NavItem[] = [
-  { label: 'Dashboard', to: '/', active: true },
-  { label: 'Payments', to: '/' },
-  { label: 'Analytics', to: '/' },
-  { label: 'Settings', to: '/' },
-];
+function NavLink({ label, to }: { label: string; to: string }) {
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
 
-function NavLink({ label, to, active }: NavItem) {
+  const active = to === '/' ? pathname === '/' : pathname.startsWith(to);
+
+  // Analytics and Settings are not implemented yet
+  const disabled = label === 'Analytics' || label === 'Settings';
+
   return (
     <Link
-      to={to}
+      to={to as '/'}
+      aria-disabled={disabled}
+      onClick={disabled ? (e) => e.preventDefault() : undefined}
       className={cn(
         'relative px-1 pb-1 text-xs font-medium uppercase tracking-[0.2em] transition-colors',
-        active ? 'text-white' : 'text-white/50 hover:text-white'
+        active ? 'text-white' : 'text-white/50 hover:text-white',
+        disabled && 'cursor-default opacity-40'
       )}
     >
       {label}
@@ -32,48 +36,32 @@ function NavLink({ label, to, active }: NavItem) {
   );
 }
 
-function IconButton({
-  children,
-  ariaLabel,
-  filled = false,
-}: {
-  children: React.ReactNode;
-  ariaLabel: string;
-  filled?: boolean;
-}) {
-  return (
-    <Button type="button" aria-label={ariaLabel} size={filled ? 'icon-nav-filled' : 'icon-nav'}>
-      {children}
-    </Button>
-  );
-}
-
 export function TopNav() {
   return (
     <header className="bg-black text-white">
       <div className="mx-auto flex h-16 max-w-[1600px] items-center justify-between gap-8 px-4 sm:px-8">
-        <div className="flex items-center gap-2 text-white">
+        <Link to="/" className="flex items-center gap-2 text-white">
           <span className="flex h-8 w-8 items-center justify-center bg-[#00ff87] text-black">
             <NexusPayLogo type="icon" size={20} />
           </span>
           <span className="text-lg font-semibold uppercase tracking-[0.15em] text-white">
             NexusPay
           </span>
-        </div>
+        </Link>
 
         <nav className="flex items-center gap-10">
-          {navItems.map((item) => (
-            <NavLink key={item.label} {...item} />
+          {NAV_ITEMS.map((item) => (
+            <NavLink key={item.label} label={item.label} to={item.to} />
           ))}
         </nav>
 
         <div className="flex items-center gap-3">
-          <IconButton ariaLabel="Notifications">
+          <Button type="button" aria-label="Notifications" size="icon-nav">
             <Bell className="h-4 w-4" />
-          </IconButton>
-          <IconButton ariaLabel="Help">
+          </Button>
+          <Button type="button" aria-label="Help" size="icon-nav">
             <HelpCircle className="h-4 w-4" />
-          </IconButton>
+          </Button>
           <Button type="button" aria-label="Profile" size="icon-nav-filled">
             <User className="h-4 w-4" />
           </Button>

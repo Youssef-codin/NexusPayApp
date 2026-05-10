@@ -12,6 +12,13 @@ export function useWallet() {
   });
 }
 
+export function usePayments() {
+  return useQuery({
+    queryKey: queryKeys.payments.list(),
+    queryFn: () => walletApi.getPayments(),
+  });
+}
+
 export function useTopUp() {
   const queryClient = useQueryClient();
 

@@ -16,6 +16,7 @@ import { Route as PublicLoginRouteImport } from './routes/_public/login'
 import { Route as AuthTransfersRouteImport } from './routes/_auth/transfers'
 import { Route as AuthScheduledRouteImport } from './routes/_auth/scheduled'
 import { Route as AuthProfileRouteImport } from './routes/_auth/profile'
+import { Route as AuthPaymentsRouteImport } from './routes/_auth/payments'
 import { Route as AuthIndexRouteImport } from './routes/_auth/_index'
 import { Route as AuthTransfersTransferIdRouteImport } from './routes/_auth/transfers.$transferId'
 
@@ -52,6 +53,11 @@ const AuthProfileRoute = AuthProfileRouteImport.update({
   path: '/profile',
   getParentRoute: () => AuthRoute,
 } as any)
+const AuthPaymentsRoute = AuthPaymentsRouteImport.update({
+  id: '/payments',
+  path: '/payments',
+  getParentRoute: () => AuthRoute,
+} as any)
 const AuthIndexRoute = AuthIndexRouteImport.update({
   id: '/_index',
   getParentRoute: () => AuthRoute,
@@ -64,6 +70,7 @@ const AuthTransfersTransferIdRoute = AuthTransfersTransferIdRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof AuthIndexRoute
+  '/payments': typeof AuthPaymentsRoute
   '/profile': typeof AuthProfileRoute
   '/scheduled': typeof AuthScheduledRoute
   '/transfers': typeof AuthTransfersRouteWithChildren
@@ -73,6 +80,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof AuthIndexRoute
+  '/payments': typeof AuthPaymentsRoute
   '/profile': typeof AuthProfileRoute
   '/scheduled': typeof AuthScheduledRoute
   '/transfers': typeof AuthTransfersRouteWithChildren
@@ -85,6 +93,7 @@ export interface FileRoutesById {
   '/_auth': typeof AuthRouteWithChildren
   '/_public': typeof PublicRouteWithChildren
   '/_auth/_index': typeof AuthIndexRoute
+  '/_auth/payments': typeof AuthPaymentsRoute
   '/_auth/profile': typeof AuthProfileRoute
   '/_auth/scheduled': typeof AuthScheduledRoute
   '/_auth/transfers': typeof AuthTransfersRouteWithChildren
@@ -96,6 +105,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/payments'
     | '/profile'
     | '/scheduled'
     | '/transfers'
@@ -105,6 +115,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/payments'
     | '/profile'
     | '/scheduled'
     | '/transfers'
@@ -116,6 +127,7 @@ export interface FileRouteTypes {
     | '/_auth'
     | '/_public'
     | '/_auth/_index'
+    | '/_auth/payments'
     | '/_auth/profile'
     | '/_auth/scheduled'
     | '/_auth/transfers'
@@ -180,6 +192,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthProfileRouteImport
       parentRoute: typeof AuthRoute
     }
+    '/_auth/payments': {
+      id: '/_auth/payments'
+      path: '/payments'
+      fullPath: '/payments'
+      preLoaderRoute: typeof AuthPaymentsRouteImport
+      parentRoute: typeof AuthRoute
+    }
     '/_auth/_index': {
       id: '/_auth/_index'
       path: ''
@@ -211,6 +230,7 @@ const AuthTransfersRouteWithChildren = AuthTransfersRoute._addFileChildren(
 
 interface AuthRouteChildren {
   AuthIndexRoute: typeof AuthIndexRoute
+  AuthPaymentsRoute: typeof AuthPaymentsRoute
   AuthProfileRoute: typeof AuthProfileRoute
   AuthScheduledRoute: typeof AuthScheduledRoute
   AuthTransfersRoute: typeof AuthTransfersRouteWithChildren
@@ -218,6 +238,7 @@ interface AuthRouteChildren {
 
 const AuthRouteChildren: AuthRouteChildren = {
   AuthIndexRoute: AuthIndexRoute,
+  AuthPaymentsRoute: AuthPaymentsRoute,
   AuthProfileRoute: AuthProfileRoute,
   AuthScheduledRoute: AuthScheduledRoute,
   AuthTransfersRoute: AuthTransfersRouteWithChildren,

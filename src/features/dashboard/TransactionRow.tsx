@@ -14,8 +14,8 @@ const KIND_ICON = {
 } as const;
 
 const STATUS_LABEL: Record<ActivityItem['status'], string> = {
-  cleared: 'Cleared',
-  received: 'Received',
+  cleared: 'Transfer',
+  received: 'Transfer',
   pending: 'Pending',
   failed: 'Failed',
 };
@@ -71,7 +71,7 @@ export function TransactionRow({ item }: TransactionRowProps) {
             item.status === 'received' ? 'bg-[#00ff87] text-black' : 'bg-black text-white'
           )}
         >
-          {STATUS_LABEL[item.status]}
+          {item.note ?? STATUS_LABEL[item.status]}
         </span>
       </div>
     </div>

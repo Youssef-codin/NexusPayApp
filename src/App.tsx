@@ -1,4 +1,5 @@
-import { useState, useLayoutEffect } from 'react';
+import { useState, useLayoutEffect, useEffect } from 'react';
+import { setupGlobalErrorHandlers } from './lib/global-error-handler';
 import axios from 'axios';
 import { decodeJwt } from 'jose';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -6,6 +7,7 @@ import { RouterProvider, createRouter } from '@tanstack/react-router';
 import { routeTree } from './routeTree.gen';
 import { LoadingSpinner } from './components/LoadingSpinner';
 import { useAuthStore } from './store/auth-store';
+import { Toaster } from './components/ui/sonner';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -34,6 +36,8 @@ declare module '@tanstack/react-router' {
 export function App() {
   const [ready, setReady] = useState(false);
 
+  useEffect(() => setupGlobalErrorHandlers(), []);
+
   useLayoutEffect(() => {
     axios
       .post('http://localhost:3000/auth/refresh', {}, { withCredentials: true })
@@ -53,6 +57,7 @@ export function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <RouterProvider router={router} />
+      <Toaster position="bottom-right" />
     </QueryClientProvider>
   );
 }

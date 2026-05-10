@@ -10,6 +10,7 @@ import type {
   TransferDetailResponse,
   ScheduledTransferListResponse,
   UserSearchResult,
+  Payment,
 } from '#/types';
 
 export const client = {
@@ -44,7 +45,10 @@ export const authApi = {
 export const walletApi = {
   getWalletByUserId: (userId: string) => client.get<Wallet>(`/wallet/${userId}`),
 
-  topUp: (amount: number) => client.patch<TopUpResponse>('/wallet/', { amount }),
+  topUp: (amount: number) =>
+    client.patch<TopUpResponse>('/wallet/', { amount_in_piastres: amount }),
+
+  getPayments: () => client.get<Payment[]>('/wallet/payments'),
 };
 
 export const transferApi = {

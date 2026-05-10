@@ -4,6 +4,7 @@ import { BalanceHero } from '#/features/dashboard/BalanceHero';
 import { MonthSummary } from '#/features/dashboard/MonthSummary';
 import { RecentActivity } from '#/features/dashboard/RecentActivity';
 import { SendMoneyModal } from '#/features/dashboard/SendMoneyModal';
+import { DepositModal } from '#/features/payments/DepositModal';
 import { useWallet } from '#/hooks/use-wallet';
 import { useTransfers } from '#/hooks/use-transfers';
 import { transformTransfersToActivity, computeMonthSummary } from '#/lib/dashboard-utils';
@@ -14,6 +15,7 @@ export const Route = createFileRoute('/_auth/_index')({
 
 function Dashboard() {
   const [sendOpen, setSendOpen] = useState(false);
+  const [depositOpen, setDepositOpen] = useState(false);
   const { data: wallet } = useWallet();
   const { data: transfers } = useTransfers();
 
@@ -30,12 +32,17 @@ function Dashboard() {
 
   return (
     <div className="space-y-8">
-      <BalanceHero balanceInPiastres={wallet.balance} onSend={() => setSendOpen(true)} />
+      <BalanceHero
+        balanceInPiastres={wallet.balance}
+        onSend={() => setSendOpen(true)}
+        onDeposit={() => setDepositOpen(true)}
+      />
       <SendMoneyModal
         isOpen={sendOpen}
         onClose={() => setSendOpen(false)}
         balanceInPiastres={wallet.balance}
       />
+      <DepositModal isOpen={depositOpen} onClose={() => setDepositOpen(false)} />
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
         <div className="lg:col-span-2">
           <RecentActivity items={activity} totalCount={transfers.length} />

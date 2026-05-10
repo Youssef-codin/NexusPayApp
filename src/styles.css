@@ -142,3 +142,25 @@ body {
     @apply font-sans;
   }
 }
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #00ff87 transparent;
+}
+
+::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #00ff87;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #00e478;
+}

@@ -1,31 +1,161 @@
 import { useState, useMemo } from 'react';
 import { Dialog as DialogPrimitive } from 'radix-ui';
 import { useForm } from '@tanstack/react-form';
-import { Check, X, ArrowLeft, Send, AlertTriangle } from 'lucide-react';
+import { X, ArrowLeft, Clock, AlertTriangle } from 'lucide-react';
 import { useSendMoney, useTransfers } from '#/hooks/use-transfers';
+import { useQueryClient } from '@tanstack/react-query';
+import { queryKeys } from '#/lib/query-keys';
 import type { UserSearchResult } from '#/types';
-import { StepIndicator, RecipientStep, AmountStep, CATS } from './send-money-shared';
+import {
+  StepIndicator,
+  RecipientStep,
+  AmountStep,
+  RecipientChip,
+  CATS,
+} from '#/features/dashboard/send-money-shared';
 
-const STEP_LABELS = ['RECIPIENT', 'AMOUNT', 'CONFIRM'];
+const STEP_LABELS = ['RECIPIENT', 'AMOUNT', 'SCHEDULE', 'CONFIRM'];
 
-function ConfirmStep({
+function buildTimeOptions(): { label: string; value: string }[] {
+  const opts: { label: string; value: string }[] = [];
+  for (let h = 0; h < 24; h++) {
+    for (const m of [0, 30]) {
+      const period = h < 12 ? 'AM' : 'PM';
+      const displayH = h % 12 === 0 ? 12 : h % 12;
+      const displayM = m === 0 ? '00' : '30';
+      opts.push({
+        label: `${String(displayH).padStart(2, '0')}:${displayM} ${period}`,
+        value: `${String(h).padStart(2, '0')}:${displayM}`,
+      });
+    }
+  }
+  return opts;
+}
+
+const TIME_OPTIONS = buildTimeOptions();
+
+function ScheduleStep({
   recipient,
-  balanceInPiastres,
-  amount,
-  category,
+  dateField,
+  timeField,
   animClass,
 }: {
   recipient: UserSearchResult;
-  balanceInPiastres: number;
+  dateField: { value: string; onChange: (v: string) => void };
+  timeField: { value: string; onChange: (v: string) => void };
+  animClass: string;
+}) {
+  const labelStyle = {
+    fontFamily: 'monospace',
+    fontSize: 11,
+    letterSpacing: '0.2em',
+    fontWeight: 700,
+    color: '#888',
+    marginBottom: 10,
+  } as const;
+
+  const inputStyle = {
+    width: '100%',
+    border: '2px solid #444',
+    background: '#111',
+    color: '#fff',
+    padding: '14px 16px',
+    fontSize: 16,
+    fontWeight: 600,
+    outline: 'none',
+    fontFamily: 'inherit',
+    letterSpacing: '-0.01em',
+    colorScheme: 'dark',
+  } as const;
+
+  return (
+    <div className={animClass} style={{ display: 'flex', flexDirection: 'column', gap: 22 }}>
+      <RecipientChip recipient={recipient} />
+
+      {/* When to send */}
+      <div>
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 8,
+            marginBottom: 14,
+            fontFamily: 'monospace',
+            fontSize: 11,
+            letterSpacing: '0.2em',
+            fontWeight: 700,
+            color: '#00ff87',
+          }}
+        >
+          <Clock size={14} strokeWidth={2.5} />
+          WHEN TO SEND
+        </div>
+
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+          <div>
+            <div style={labelStyle}>DATE</div>
+            <input
+              type="date"
+              value={dateField.value}
+              onChange={(e) => dateField.onChange(e.target.value)}
+              min={new Date().toISOString().slice(0, 10)}
+              style={inputStyle}
+            />
+          </div>
+          <div>
+            <div style={labelStyle}>TIME</div>
+            <select
+              value={timeField.value}
+              onChange={(e) => timeField.onChange(e.target.value)}
+              style={{ ...inputStyle, cursor: 'pointer' }}
+            >
+              {TIME_OPTIONS.map((opt) => (
+                <option key={opt.value} value={opt.value}>
+                  {opt.label}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ScheduleConfirmStep({
+  recipient,
+  amount,
+  category,
+  date,
+  time,
+  animClass,
+}: {
+  recipient: UserSearchResult;
   amount: string;
   category: string;
+  date: string;
+  time: string;
   animClass: string;
 }) {
   const numericAmount = parseFloat(amount) || 0;
-  const balanceEGP = balanceInPiastres / 100;
   const fmtEGP = (n: number) =>
     n.toLocaleString('en-EG', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   const catLabel = CATS.find((c) => c.id === category)?.label;
+
+  const firstSend =
+    date && time
+      ? new Intl.DateTimeFormat('en-US', {
+          weekday: 'short',
+          month: 'short',
+          day: 'numeric',
+          year: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit',
+          hour12: true,
+        })
+          .format(new Date(`${date}T${time}:00`))
+          .toUpperCase()
+      : '—';
 
   const rows = [
     {
@@ -33,17 +163,15 @@ function ConfirmStep({
       val: (
         <span style={{ fontWeight: 700, color: '#fff' }}>
           {recipient.full_name}{' '}
-          <span style={{ color: '#00ff87', fontSize: 13 }}>ID·{recipient.id.slice(0, 8)}…</span>
+          <span style={{ color: '#00ff87', fontSize: 13 }}>
+            @{recipient.full_name.toLowerCase().replace(/\s+/g, '')}
+          </span>
         </span>
       ),
     },
     {
       key: 'AMOUNT',
-      val: (
-        <span style={{ fontWeight: 700, fontSize: 28, letterSpacing: '-0.02em', color: '#00ff87' }}>
-          EGP {fmtEGP(numericAmount)}
-        </span>
-      ),
+      val: <span style={{ fontWeight: 700, color: '#00ff87' }}>EGP {fmtEGP(numericAmount)}</span>,
     },
     ...(catLabel
       ? [
@@ -67,16 +195,8 @@ function ConfirmStep({
           },
         ]
       : []),
+    { key: 'FIRST SEND', val: <span style={{ color: '#fff', fontWeight: 700 }}>{firstSend}</span> },
     { key: 'FEE', val: <span style={{ color: '#00ff87', fontWeight: 700 }}>EGP 0.00 — FREE</span> },
-    { key: 'ARRIVES', val: <span style={{ color: '#fff', fontWeight: 700 }}>INSTANTLY</span> },
-    {
-      key: 'BAL AFTER',
-      val: (
-        <span style={{ fontWeight: 700, color: '#aaa' }}>
-          EGP {fmtEGP(balanceEGP - numericAmount)}
-        </span>
-      ),
-    },
   ];
 
   return (
@@ -93,6 +213,10 @@ function ConfirmStep({
       >
         <div
           style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: 8,
             fontFamily: 'monospace',
             fontSize: 11,
             letterSpacing: '0.2em',
@@ -101,7 +225,8 @@ function ConfirmStep({
             marginBottom: 10,
           }}
         >
-          YOU ARE SENDING
+          <Clock size={14} strokeWidth={2.5} />
+          SCHEDULED TRANSFER
         </div>
         <div
           style={{
@@ -180,28 +305,35 @@ function ConfirmStep({
             lineHeight: 1.6,
           }}
         >
-          TRANSFERS ARE INSTANT AND CANNOT BE REVERSED. VERIFY RECIPIENT BEFORE CONFIRMING.
+          SCHEDULED TRANSFERS CAN BE CANCELLED FROM THE PAYMENTS DASHBOARD BEFORE THEY ARE
+          PROCESSED.
         </span>
       </div>
     </div>
   );
 }
 
-export interface SendMoneyModalProps {
+export interface ScheduleMoneyModalProps {
   isOpen: boolean;
   onClose: () => void;
   balanceInPiastres: number;
 }
 
-export function SendMoneyModal({ isOpen, onClose, balanceInPiastres }: SendMoneyModalProps) {
+export function ScheduleMoneyModal({
+  isOpen,
+  onClose,
+  balanceInPiastres,
+}: ScheduleMoneyModalProps) {
   const [step, setStep] = useState(1);
   const [dir, setDir] = useState<'fwd' | 'back'>('fwd');
   const [animKey, setAnimKey] = useState(0);
   const [recipient, setRecipient] = useState<UserSearchResult | null>(null);
-  const [txId, setTxId] = useState<string | null>(null);
+  const [scheduled, setScheduled] = useState(false);
 
   const sendMoney = useSendMoney();
+  const queryClient = useQueryClient();
   const { data: transfers = [] } = useTransfers();
+
   const recentRecipients = useMemo<UserSearchResult[]>(() => {
     const seen = new Set<string>();
     const results: UserSearchResult[] = [];
@@ -215,15 +347,26 @@ export function SendMoneyModal({ isOpen, onClose, balanceInPiastres }: SendMoney
     return results;
   }, [transfers]);
 
+  const defaultTime = TIME_OPTIONS.find((o) => o.value === '09:00')?.value ?? TIME_OPTIONS[0].value;
+
   const form = useForm({
-    defaultValues: { to_wallet_id: '', amount: '', category: '' },
+    defaultValues: {
+      to_wallet_id: '',
+      amount: '',
+      category: '',
+      date: '',
+      time: defaultTime,
+    },
     onSubmit: async ({ value }) => {
       const piastres = Math.round((parseFloat(value.amount) || 0) * 100);
-      const result = await sendMoney.mutateAsync({
+      const scheduledAt = new Date(`${value.date}T${value.time}:00`).toISOString();
+      await sendMoney.mutateAsync({
         to_wallet_id: value.to_wallet_id,
         amount_in_piastres: piastres,
+        scheduled_at: scheduledAt,
       });
-      setTxId(result.id);
+      queryClient.invalidateQueries({ queryKey: queryKeys.scheduled.list() });
+      setScheduled(true);
     },
   });
 
@@ -232,7 +375,7 @@ export function SendMoneyModal({ isOpen, onClose, balanceInPiastres }: SendMoney
     setDir('fwd');
     setAnimKey(0);
     setRecipient(null);
-    setTxId(null);
+    setScheduled(false);
     sendMoney.reset();
     form.reset();
   };
@@ -265,16 +408,14 @@ export function SendMoneyModal({ isOpen, onClose, balanceInPiastres }: SendMoney
   };
 
   const balanceEGP = balanceInPiastres / 100;
-  const numericAmount = parseFloat(form.state.values.amount) || 0;
-  const canNext1 = !!recipient;
-
   const animClass =
     dir === 'fwd'
       ? 'animate-in fade-in-0 slide-in-from-right-8 duration-300'
       : 'animate-in fade-in-0 slide-in-from-left-8 duration-300';
 
-  const TITLES = ['SELECT RECIPIENT', 'AMOUNT & CATEGORY', 'CONFIRM TRANSFER'];
-  const sent = !!txId;
+  const TITLES = ['SELECT RECIPIENT', 'AMOUNT & CATEGORY', 'SCHEDULE', 'CONFIRM TRANSFER'];
+
+  const canSchedule = (date: string) => !!date;
 
   return (
     <DialogPrimitive.Root
@@ -304,7 +445,7 @@ export function SendMoneyModal({ isOpen, onClose, balanceInPiastres }: SendMoney
             transform: 'translate(-50%, -50%)',
             zIndex: 1001,
             width: '100%',
-            maxWidth: 620,
+            maxWidth: 640,
             maxHeight: '92vh',
             background: '#0d0d0d',
             border: '4px solid #000',
@@ -325,7 +466,7 @@ export function SendMoneyModal({ isOpen, onClose, balanceInPiastres }: SendMoney
               whiteSpace: 'nowrap',
             }}
           >
-            Send Money
+            Schedule Transfer
           </DialogPrimitive.Title>
 
           {/* Header */}
@@ -357,7 +498,7 @@ export function SendMoneyModal({ isOpen, onClose, balanceInPiastres }: SendMoney
                       color: '#555',
                     }}
                   >
-                    NEXUSPAY · TRANSFER
+                    NEXUSPAY · SCHEDULED
                   </div>
                   <div
                     style={{
@@ -368,7 +509,7 @@ export function SendMoneyModal({ isOpen, onClose, balanceInPiastres }: SendMoney
                       lineHeight: 1.1,
                     }}
                   >
-                    {sent ? 'TRANSFER SENT' : TITLES[step - 1]}
+                    {scheduled ? 'TRANSFER SCHEDULED' : TITLES[step - 1]}
                   </div>
                 </div>
               </div>
@@ -391,12 +532,12 @@ export function SendMoneyModal({ isOpen, onClose, balanceInPiastres }: SendMoney
                 <X size={16} strokeWidth={3} />
               </button>
             </div>
-            {!sent && <StepIndicator step={step} labels={STEP_LABELS} />}
+            {!scheduled && <StepIndicator step={step} labels={STEP_LABELS} />}
           </div>
 
           {/* Body */}
           <div style={{ flex: 1, overflowY: 'auto', padding: '22px 24px', minHeight: 0 }}>
-            {sent ? (
+            {scheduled ? (
               <div
                 className="animate-in fade-in-0 slide-in-from-right-8 duration-300"
                 style={{ textAlign: 'center', padding: '40px 0' }}
@@ -413,12 +554,12 @@ export function SendMoneyModal({ isOpen, onClose, balanceInPiastres }: SendMoney
                     margin: '0 auto 20px',
                   }}
                 >
-                  <Check size={36} strokeWidth={3} />
+                  <Clock size={32} strokeWidth={2.5} color="#000" />
                 </div>
                 <div
                   style={{ fontWeight: 700, fontSize: 32, letterSpacing: '-0.03em', color: '#fff' }}
                 >
-                  TRANSFER SENT
+                  TRANSFER SCHEDULED
                 </div>
                 <div
                   style={{
@@ -429,29 +570,22 @@ export function SendMoneyModal({ isOpen, onClose, balanceInPiastres }: SendMoney
                     letterSpacing: '0.1em',
                   }}
                 >
-                  EGP {numericAmount.toLocaleString('en-EG', { minimumFractionDigits: 2 })} →{' '}
-                  {recipient?.full_name}
+                  EGP{' '}
+                  {(parseFloat(form.state.values.amount) || 0).toLocaleString('en-EG', {
+                    minimumFractionDigits: 2,
+                  })}{' '}
+                  → {recipient?.full_name}
                 </div>
                 <div
                   style={{
-                    marginTop: 28,
-                    padding: '14px 18px',
-                    background: '#001a0a',
-                    border: '2px solid #00ff87',
-                    display: 'inline-block',
+                    fontFamily: 'monospace',
+                    fontSize: 11,
+                    color: '#444',
+                    marginTop: 6,
+                    letterSpacing: '0.1em',
                   }}
                 >
-                  <span
-                    style={{
-                      fontFamily: 'monospace',
-                      fontSize: 11,
-                      letterSpacing: '0.18em',
-                      fontWeight: 700,
-                      color: '#00ff87',
-                    }}
-                  >
-                    TRANSACTION ID · {txId}
-                  </span>
+                  VIEW IN PAYMENTS → SCHEDULED
                 </div>
               </div>
             ) : (
@@ -499,15 +633,37 @@ export function SendMoneyModal({ isOpen, onClose, balanceInPiastres }: SendMoney
                     </form.Field>
                   )}
                   {step === 3 && recipient && (
+                    <form.Field name="date">
+                      {(dateF) => (
+                        <form.Field name="time">
+                          {(timeF) => (
+                            <ScheduleStep
+                              recipient={recipient}
+                              dateField={{ value: dateF.state.value, onChange: dateF.handleChange }}
+                              timeField={{ value: timeF.state.value, onChange: timeF.handleChange }}
+                              animClass={animClass}
+                            />
+                          )}
+                        </form.Field>
+                      )}
+                    </form.Field>
+                  )}
+                  {step === 4 && recipient && (
                     <form.Subscribe
-                      selector={(s) => ({ amount: s.values.amount, category: s.values.category })}
+                      selector={(s) => ({
+                        amount: s.values.amount,
+                        category: s.values.category,
+                        date: s.values.date,
+                        time: s.values.time,
+                      })}
                     >
-                      {({ amount, category }) => (
-                        <ConfirmStep
+                      {({ amount, category, date, time }) => (
+                        <ScheduleConfirmStep
                           recipient={recipient}
-                          balanceInPiastres={balanceInPiastres}
                           amount={amount}
                           category={category}
+                          date={date}
+                          time={time}
                           animClass={animClass}
                         />
                       )}
@@ -519,7 +675,7 @@ export function SendMoneyModal({ isOpen, onClose, balanceInPiastres }: SendMoney
           </div>
 
           {/* Footer */}
-          {!sent ? (
+          {!scheduled ? (
             <div
               style={{
                 borderTop: '2px solid #1a1a1a',
@@ -573,70 +729,56 @@ export function SendMoneyModal({ isOpen, onClose, balanceInPiastres }: SendMoney
 
               <div style={{ flex: 1 }} />
 
-              {step === 1 && (
-                <button
-                  type="button"
-                  onClick={() => canNext1 && goTo(2)}
-                  disabled={!canNext1}
-                  style={{
-                    border: `3px solid ${canNext1 ? '#000' : '#1a1a1a'}`,
-                    background: canNext1 ? '#00ff87' : '#1a1a1a',
-                    color: canNext1 ? '#000' : '#333',
-                    padding: '14px 28px',
-                    fontWeight: 700,
-                    fontSize: 14,
-                    letterSpacing: '0.1em',
-                    cursor: canNext1 ? 'pointer' : 'not-allowed',
-                    boxShadow: canNext1 ? '4px 4px 0 #000' : 'none',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 10,
-                    transition: 'all 0.15s',
-                    fontFamily: 'inherit',
-                  }}
-                >
-                  NEXT →
-                </button>
-              )}
+              <form.Subscribe
+                selector={(s) => ({
+                  amount: s.values.amount,
+                  date: s.values.date,
+                  isSubmitting: s.isSubmitting,
+                })}
+              >
+                {({ amount, date, isSubmitting }) => {
+                  const canNext1 = !!recipient;
+                  const canNext2 =
+                    (parseFloat(amount) || 0) >= 10 && (parseFloat(amount) || 0) <= balanceEGP;
+                  const canNext3 = canSchedule(date);
 
-              {step === 2 && (
-                <form.Subscribe selector={(s) => s.values.amount}>
-                  {(amountVal) => {
-                    const canReview =
-                      (parseFloat(amountVal) || 0) >= 10 &&
-                      (parseFloat(amountVal) || 0) <= balanceEGP;
+                  if (step === 1) {
                     return (
                       <button
                         type="button"
-                        onClick={() => canReview && goTo(3)}
-                        disabled={!canReview}
-                        style={{
-                          border: `3px solid ${canReview ? '#000' : '#1a1a1a'}`,
-                          background: canReview ? '#00ff87' : '#1a1a1a',
-                          color: canReview ? '#000' : '#333',
-                          padding: '14px 28px',
-                          fontWeight: 700,
-                          fontSize: 14,
-                          letterSpacing: '0.1em',
-                          cursor: canReview ? 'pointer' : 'not-allowed',
-                          boxShadow: canReview ? '4px 4px 0 #000' : 'none',
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: 10,
-                          transition: 'all 0.15s',
-                          fontFamily: 'inherit',
-                        }}
+                        onClick={() => canNext1 && goTo(2)}
+                        disabled={!canNext1}
+                        style={nextBtnStyle(canNext1)}
+                      >
+                        NEXT →
+                      </button>
+                    );
+                  }
+                  if (step === 2) {
+                    return (
+                      <button
+                        type="button"
+                        onClick={() => canNext2 && goTo(3)}
+                        disabled={!canNext2}
+                        style={nextBtnStyle(canNext2)}
+                      >
+                        NEXT →
+                      </button>
+                    );
+                  }
+                  if (step === 3) {
+                    return (
+                      <button
+                        type="button"
+                        onClick={() => canNext3 && goTo(4)}
+                        disabled={!canNext3}
+                        style={nextBtnStyle(canNext3)}
                       >
                         REVIEW →
                       </button>
                     );
-                  }}
-                </form.Subscribe>
-              )}
-
-              {step === 3 && (
-                <form.Subscribe selector={(s) => s.isSubmitting}>
-                  {(isSubmitting) => (
+                  }
+                  return (
                     <button
                       type="button"
                       onClick={() => form.handleSubmit()}
@@ -658,12 +800,12 @@ export function SendMoneyModal({ isOpen, onClose, balanceInPiastres }: SendMoney
                         fontFamily: 'inherit',
                       }}
                     >
-                      <Send size={16} strokeWidth={2.5} />
-                      {isSubmitting || sendMoney.isPending ? 'SENDING…' : 'CONFIRM & SEND'}
+                      <Clock size={16} strokeWidth={2.5} />
+                      {isSubmitting || sendMoney.isPending ? 'SCHEDULING…' : 'SCHEDULE TRANSFER'}
                     </button>
-                  )}
-                </form.Subscribe>
-              )}
+                  );
+                }}
+              </form.Subscribe>
             </div>
           ) : (
             <div
@@ -717,7 +859,7 @@ export function SendMoneyModal({ isOpen, onClose, balanceInPiastres }: SendMoney
                   fontWeight: 700,
                 }}
               >
-                TRANSFER FAILED — PLEASE TRY AGAIN
+                SCHEDULING FAILED — PLEASE TRY AGAIN
               </span>
             </div>
           )}
@@ -725,4 +867,23 @@ export function SendMoneyModal({ isOpen, onClose, balanceInPiastres }: SendMoney
       </DialogPrimitive.Portal>
     </DialogPrimitive.Root>
   );
+}
+
+function nextBtnStyle(enabled: boolean): React.CSSProperties {
+  return {
+    border: `3px solid ${enabled ? '#000' : '#1a1a1a'}`,
+    background: enabled ? '#00ff87' : '#1a1a1a',
+    color: enabled ? '#000' : '#333',
+    padding: '14px 28px',
+    fontWeight: 700,
+    fontSize: 14,
+    letterSpacing: '0.1em',
+    cursor: enabled ? 'pointer' : 'not-allowed',
+    boxShadow: enabled ? '4px 4px 0 #000' : 'none',
+    display: 'flex',
+    alignItems: 'center',
+    gap: 10,
+    transition: 'all 0.15s',
+    fontFamily: 'inherit',
+  };
 }

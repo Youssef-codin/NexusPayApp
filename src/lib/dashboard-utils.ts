@@ -1,5 +1,11 @@
 import type { Transfer } from '#/types';
-import type { ActivityItem, ActivityKind, ActivityStatus, IMonthSummary } from '#/types/dashboard';
+import type {
+  ActivityItem,
+  ActivityKind,
+  ActivityStatus,
+  IMonthSummary,
+  TransferNote,
+} from '#/types/dashboard';
 
 const NOTE_KIND_MAP: Record<string, ActivityKind> = {
   subscription: 'subscription',
@@ -27,14 +33,17 @@ function getStatusFromTransfer(
 }
 
 export function transformTransfersToActivity(transfers: Transfer[]): ActivityItem[] {
-  return transfers.map((t) => ({
-    id: t.id,
-    name: t.direction === 'credit' ? t.from_user.full_name : t.to_user.full_name,
-    kind: getKindFromNote(t.note),
-    amountInPiastres: t.direction === 'debit' ? -t.amount_in_piastres : t.amount_in_piastres,
-    status: getStatusFromTransfer(t.status, t.direction),
-    occurredAt: t.created_at,
-  }));
+  return [...transfers]
+    .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+    .map((t) => ({
+      id: t.id,
+      name: t.direction === 'credit' ? t.from_user.full_name : t.to_user.full_name,
+      kind: getKindFromNote(t.note),
+      amountInPiastres: t.direction === 'debit' ? -t.amount_in_piastres : t.amount_in_piastres,
+      status: getStatusFromTransfer(t.status, t.direction),
+      note: t.note as TransferNote | undefined,
+      occurredAt: t.created_at,
+    }));
 }
 
 export function computeMonthSummary(transfers: Transfer[]): IMonthSummary {
