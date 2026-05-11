@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from '@tanstack/react-router';
 import { SendMoneyModal } from '#/features/dashboard/SendMoneyModal';
 import { useWallet } from '#/hooks/use-wallet';
 import { DepositModal } from './DepositModal';
@@ -9,22 +10,29 @@ import { ScheduleMoneyModal } from './ScheduleMoneyModal';
 
 type TabId = 'wallet' | 'transfers' | 'scheduled';
 
-const TABS: { id: TabId; label: string }[] = [
-  { id: 'wallet', label: 'Wallet' },
-  { id: 'transfers', label: 'Transfers' },
-  { id: 'scheduled', label: 'Scheduled' },
+const TABS: { id: TabId; label: string; path: string }[] = [
+  { id: 'wallet', label: 'Wallet', path: '/payments/' },
+  { id: 'transfers', label: 'Transfers', path: '/payments/transfers' },
+  { id: 'scheduled', label: 'Scheduled', path: '/payments/scheduled' },
 ];
 
 interface PaymentsPageProps {
-  initialTab?: TabId;
+  activeTab?: TabId;
 }
 
-export function PaymentsPage({ initialTab = 'wallet' }: PaymentsPageProps) {
-  const [tab, setTab] = useState<TabId>(initialTab);
+export function PaymentsPage({ activeTab = 'wallet' }: PaymentsPageProps) {
+  const navigate = useNavigate();
   const [depositOpen, setDepositOpen] = useState(false);
   const [sendOpen, setSendOpen] = useState(false);
   const [scheduleOpen, setScheduleOpen] = useState(false);
   const { data: wallet } = useWallet();
+
+  const handleTabClick = (tab: TabId) => {
+    const target = TABS.find((t) => t.id === tab);
+    if (target) {
+      navigate({ to: target.path as any });
+    }
+  };
 
   return (
     <div className="flex flex-col gap-5">
@@ -39,12 +47,12 @@ export function PaymentsPage({ initialTab = 'wallet' }: PaymentsPageProps) {
       {/* Tab bar */}
       <div className="flex border-b-4 border-black">
         {TABS.map(({ id, label }) => {
-          const active = id === tab;
+          const active = id === activeTab;
           return (
             <button
               type="button"
               key={id}
-              onClick={() => setTab(id)}
+              onClick={() => handleTabClick(id)}
               className={`px-6 py-2.5 text-sm font-bold uppercase tracking-widest transition-colors ${
                 active
                   ? '-mb-[4px] border-b-4 border-[#00ff87] bg-black text-[#00ff87]'
@@ -59,9 +67,9 @@ export function PaymentsPage({ initialTab = 'wallet' }: PaymentsPageProps) {
 
       {/* Tab content */}
       <div className="flex flex-col">
-        {tab === 'wallet' && <WalletTab onDeposit={() => setDepositOpen(true)} />}
-        {tab === 'transfers' && <TransfersTab onNewTransfer={() => setSendOpen(true)} />}
-        {tab === 'scheduled' && <ScheduledTab onNewSchedule={() => setScheduleOpen(true)} />}
+        {activeTab === 'wallet' && <WalletTab onDeposit={() => setDepositOpen(true)} />}
+        {activeTab === 'transfers' && <TransfersTab onNewTransfer={() => setSendOpen(true)} />}
+        {activeTab === 'scheduled' && <ScheduledTab onNewSchedule={() => setScheduleOpen(true)} />}
       </div>
 
       {/* Modals */}

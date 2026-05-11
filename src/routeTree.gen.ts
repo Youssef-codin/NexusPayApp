@@ -16,9 +16,11 @@ import { Route as PublicLoginRouteImport } from './routes/_public/login'
 import { Route as AuthTransfersRouteImport } from './routes/_auth/transfers'
 import { Route as AuthScheduledRouteImport } from './routes/_auth/scheduled'
 import { Route as AuthProfileRouteImport } from './routes/_auth/profile'
-import { Route as AuthPaymentsRouteImport } from './routes/_auth/payments'
 import { Route as AuthIndexRouteImport } from './routes/_auth/_index'
+import { Route as AuthPaymentsIndexRouteImport } from './routes/_auth/payments/index'
 import { Route as AuthTransfersTransferIdRouteImport } from './routes/_auth/transfers.$transferId'
+import { Route as AuthPaymentsTransfersRouteImport } from './routes/_auth/payments/transfers'
+import { Route as AuthPaymentsScheduledRouteImport } from './routes/_auth/payments/scheduled'
 
 const PublicRoute = PublicRouteImport.update({
   id: '/_public',
@@ -53,13 +55,13 @@ const AuthProfileRoute = AuthProfileRouteImport.update({
   path: '/profile',
   getParentRoute: () => AuthRoute,
 } as any)
-const AuthPaymentsRoute = AuthPaymentsRouteImport.update({
-  id: '/payments',
-  path: '/payments',
-  getParentRoute: () => AuthRoute,
-} as any)
 const AuthIndexRoute = AuthIndexRouteImport.update({
   id: '/_index',
+  getParentRoute: () => AuthRoute,
+} as any)
+const AuthPaymentsIndexRoute = AuthPaymentsIndexRouteImport.update({
+  id: '/payments/',
+  path: '/payments/',
   getParentRoute: () => AuthRoute,
 } as any)
 const AuthTransfersTransferIdRoute = AuthTransfersTransferIdRouteImport.update({
@@ -67,73 +69,95 @@ const AuthTransfersTransferIdRoute = AuthTransfersTransferIdRouteImport.update({
   path: '/$transferId',
   getParentRoute: () => AuthTransfersRoute,
 } as any)
+const AuthPaymentsTransfersRoute = AuthPaymentsTransfersRouteImport.update({
+  id: '/payments/transfers',
+  path: '/payments/transfers',
+  getParentRoute: () => AuthRoute,
+} as any)
+const AuthPaymentsScheduledRoute = AuthPaymentsScheduledRouteImport.update({
+  id: '/payments/scheduled',
+  path: '/payments/scheduled',
+  getParentRoute: () => AuthRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof AuthIndexRoute
-  '/payments': typeof AuthPaymentsRoute
   '/profile': typeof AuthProfileRoute
   '/scheduled': typeof AuthScheduledRoute
   '/transfers': typeof AuthTransfersRouteWithChildren
   '/login': typeof PublicLoginRoute
   '/register': typeof PublicRegisterRoute
+  '/payments/scheduled': typeof AuthPaymentsScheduledRoute
+  '/payments/transfers': typeof AuthPaymentsTransfersRoute
   '/transfers/$transferId': typeof AuthTransfersTransferIdRoute
+  '/payments/': typeof AuthPaymentsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof AuthIndexRoute
-  '/payments': typeof AuthPaymentsRoute
   '/profile': typeof AuthProfileRoute
   '/scheduled': typeof AuthScheduledRoute
   '/transfers': typeof AuthTransfersRouteWithChildren
   '/login': typeof PublicLoginRoute
   '/register': typeof PublicRegisterRoute
+  '/payments/scheduled': typeof AuthPaymentsScheduledRoute
+  '/payments/transfers': typeof AuthPaymentsTransfersRoute
   '/transfers/$transferId': typeof AuthTransfersTransferIdRoute
+  '/payments': typeof AuthPaymentsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_auth': typeof AuthRouteWithChildren
   '/_public': typeof PublicRouteWithChildren
   '/_auth/_index': typeof AuthIndexRoute
-  '/_auth/payments': typeof AuthPaymentsRoute
   '/_auth/profile': typeof AuthProfileRoute
   '/_auth/scheduled': typeof AuthScheduledRoute
   '/_auth/transfers': typeof AuthTransfersRouteWithChildren
   '/_public/login': typeof PublicLoginRoute
   '/_public/register': typeof PublicRegisterRoute
+  '/_auth/payments/scheduled': typeof AuthPaymentsScheduledRoute
+  '/_auth/payments/transfers': typeof AuthPaymentsTransfersRoute
   '/_auth/transfers/$transferId': typeof AuthTransfersTransferIdRoute
+  '/_auth/payments/': typeof AuthPaymentsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/payments'
     | '/profile'
     | '/scheduled'
     | '/transfers'
     | '/login'
     | '/register'
+    | '/payments/scheduled'
+    | '/payments/transfers'
     | '/transfers/$transferId'
+    | '/payments/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/payments'
     | '/profile'
     | '/scheduled'
     | '/transfers'
     | '/login'
     | '/register'
+    | '/payments/scheduled'
+    | '/payments/transfers'
     | '/transfers/$transferId'
+    | '/payments'
   id:
     | '__root__'
     | '/_auth'
     | '/_public'
     | '/_auth/_index'
-    | '/_auth/payments'
     | '/_auth/profile'
     | '/_auth/scheduled'
     | '/_auth/transfers'
     | '/_public/login'
     | '/_public/register'
+    | '/_auth/payments/scheduled'
+    | '/_auth/payments/transfers'
     | '/_auth/transfers/$transferId'
+    | '/_auth/payments/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -192,18 +216,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthProfileRouteImport
       parentRoute: typeof AuthRoute
     }
-    '/_auth/payments': {
-      id: '/_auth/payments'
-      path: '/payments'
-      fullPath: '/payments'
-      preLoaderRoute: typeof AuthPaymentsRouteImport
-      parentRoute: typeof AuthRoute
-    }
     '/_auth/_index': {
       id: '/_auth/_index'
       path: ''
       fullPath: '/'
       preLoaderRoute: typeof AuthIndexRouteImport
+      parentRoute: typeof AuthRoute
+    }
+    '/_auth/payments/': {
+      id: '/_auth/payments/'
+      path: '/payments'
+      fullPath: '/payments/'
+      preLoaderRoute: typeof AuthPaymentsIndexRouteImport
       parentRoute: typeof AuthRoute
     }
     '/_auth/transfers/$transferId': {
@@ -212,6 +236,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/transfers/$transferId'
       preLoaderRoute: typeof AuthTransfersTransferIdRouteImport
       parentRoute: typeof AuthTransfersRoute
+    }
+    '/_auth/payments/transfers': {
+      id: '/_auth/payments/transfers'
+      path: '/payments/transfers'
+      fullPath: '/payments/transfers'
+      preLoaderRoute: typeof AuthPaymentsTransfersRouteImport
+      parentRoute: typeof AuthRoute
+    }
+    '/_auth/payments/scheduled': {
+      id: '/_auth/payments/scheduled'
+      path: '/payments/scheduled'
+      fullPath: '/payments/scheduled'
+      preLoaderRoute: typeof AuthPaymentsScheduledRouteImport
+      parentRoute: typeof AuthRoute
     }
   }
 }
@@ -230,18 +268,22 @@ const AuthTransfersRouteWithChildren = AuthTransfersRoute._addFileChildren(
 
 interface AuthRouteChildren {
   AuthIndexRoute: typeof AuthIndexRoute
-  AuthPaymentsRoute: typeof AuthPaymentsRoute
   AuthProfileRoute: typeof AuthProfileRoute
   AuthScheduledRoute: typeof AuthScheduledRoute
   AuthTransfersRoute: typeof AuthTransfersRouteWithChildren
+  AuthPaymentsScheduledRoute: typeof AuthPaymentsScheduledRoute
+  AuthPaymentsTransfersRoute: typeof AuthPaymentsTransfersRoute
+  AuthPaymentsIndexRoute: typeof AuthPaymentsIndexRoute
 }
 
 const AuthRouteChildren: AuthRouteChildren = {
   AuthIndexRoute: AuthIndexRoute,
-  AuthPaymentsRoute: AuthPaymentsRoute,
   AuthProfileRoute: AuthProfileRoute,
   AuthScheduledRoute: AuthScheduledRoute,
   AuthTransfersRoute: AuthTransfersRouteWithChildren,
+  AuthPaymentsScheduledRoute: AuthPaymentsScheduledRoute,
+  AuthPaymentsTransfersRoute: AuthPaymentsTransfersRoute,
+  AuthPaymentsIndexRoute: AuthPaymentsIndexRoute,
 }
 
 const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)

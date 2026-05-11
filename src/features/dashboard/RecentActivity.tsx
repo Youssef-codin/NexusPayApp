@@ -8,8 +8,7 @@ import type { ActivityItem } from '#/types/dashboard';
 function ViewAllLink() {
   return (
     <Link
-      to="/payments"
-      search={{ tab: 'transfers' }}
+      to="/payments/transfers"
       className="font-mono text-[10px] font-bold uppercase tracking-[0.14em] text-neutral-400 underline transition-colors hover:text-black"
     >
       View All

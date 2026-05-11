@@ -20,6 +20,17 @@ const STATUS_LABEL: Record<ActivityItem['status'], string> = {
   failed: 'Failed',
 };
 
+const CATEGORY_COLORS: Record<NonNullable<ActivityItem['note']>, { bg: string; text: string }> = {
+  subscription: { bg: 'bg-indigo-600', text: 'text-white' },
+  rent: { bg: 'bg-slate-700', text: 'text-white' },
+  shopping: { bg: 'bg-rose-600', text: 'text-white' },
+  food: { bg: 'bg-amber-600', text: 'text-white' },
+  transport: { bg: 'bg-teal-600', text: 'text-white' },
+  utilities: { bg: 'bg-amber-500', text: 'text-black' },
+  entertainment: { bg: 'bg-emerald-600', text: 'text-white' },
+  other: { bg: 'bg-zinc-500', text: 'text-white' },
+};
+
 function formatOccurredAt(iso: string): string {
   const date = new Date(iso);
   const datePart = new Intl.DateTimeFormat('en-US', {
@@ -68,7 +79,11 @@ export function TransactionRow({ item }: TransactionRowProps) {
         <span
           className={cn(
             'px-2 py-0.5 text-[10px] font-medium uppercase tracking-[0.15em]',
-            item.status === 'received' ? 'bg-[#00ff87] text-black' : 'bg-black text-white'
+            item.note && CATEGORY_COLORS[item.note]
+              ? cn(CATEGORY_COLORS[item.note].bg, CATEGORY_COLORS[item.note].text)
+              : item.status === 'received'
+                ? 'bg-[#00ff87] text-black'
+                : 'bg-black text-white'
           )}
         >
           {item.note ?? STATUS_LABEL[item.status]}

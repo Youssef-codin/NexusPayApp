@@ -29,7 +29,7 @@ function StatCard({
   );
 }
 
-const STATUS_BADGE: Record<Transfer['status'], { bg: string; text: string }> = {
+const STATUS_BADGE: Partial<Record<Transfer['status'], { bg: string; text: string }>> = {
   completed: { bg: '#00ff87', text: '#000' },
   pending: { bg: '#f5c518', text: '#000' },
   failed: { bg: '#ba1a1a', text: '#fff' },
@@ -40,7 +40,7 @@ function TransferRow({ transfer }: { transfer: Transfer }) {
   const counterparty = isDebit ? transfer.to_user.full_name : transfer.from_user.full_name;
   const walletRef = (isDebit ? transfer.to_wallet_id : transfer.from_wallet_id).slice(0, 8);
   const amount = transfer.amount_in_piastres;
-  const badge = STATUS_BADGE[transfer.status];
+  const badge = STATUS_BADGE[transfer.status] ?? { bg: '#888', text: '#fff' };
 
   const date = new Intl.DateTimeFormat('en-US', {
     month: 'short',

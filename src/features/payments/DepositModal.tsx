@@ -1,11 +1,11 @@
-import { useState } from 'react';
+import { Fragment, useState } from 'react';
 import { useOnlineStatus } from '#/hooks/use-online-status';
 import { Dialog } from 'radix-ui';
 import { Elements, useStripe, useElements, CardNumberElement } from '@stripe/react-stripe-js';
 import { useQueryClient } from '@tanstack/react-query';
 import { useTopUp, useWallet } from '#/hooks/use-wallet';
 import { queryKeys } from '#/lib/query-keys';
-import { stripePromise } from '#/lib/stripe';
+import { getStripePromise } from '#/lib/stripe';
 import { AmountStep } from './steps/AmountStep';
 import { CardStep } from './steps/CardStep';
 import { ConfirmStep } from './steps/ConfirmStep';
@@ -162,17 +162,16 @@ function DepositModalInner({ isOpen, onClose }: DepositModalProps) {
 
             {/* Step indicator — hidden on success */}
             {step < 4 && (
-              <div className="mb-5 flex items-center">
+              <div className="mb-5 flex items-start">
                 {[1, 2, 3].map((n, i) => (
-                  <>
-                    <StepDot key={n} n={n} label={STEP_LABELS[n]} current={step} />
+                  <Fragment key={n}>
+                    <StepDot n={n} label={STEP_LABELS[n]} current={step} />
                     {i < 2 && (
                       <div
-                        key={`line-${n}`}
-                        className={`mx-2 mb-5 h-0.5 flex-1 transition-colors duration-300 ${step > n ? 'bg-[#00ff87]' : 'bg-[#252525]'}`}
+                        className={`mx-2 mt-3 h-0.5 flex-1 transition-colors duration-300 ${step > n ? 'bg-[#00ff87]' : 'bg-[#252525]'}`}
                       />
                     )}
-                  </>
+                  </Fragment>
                 ))}
               </div>
             )}
@@ -230,8 +229,12 @@ export function DepositModal({ isOpen, onClose }: DepositModalProps) {
   }
 
   return (
-    <Elements key={sessionKey} stripe={stripePromise}>
-      <DepositModalInner isOpen={isOpen} onClose={handleClose} />
-    </Elements>
+    <>
+      {isOpen && (
+        <Elements key={sessionKey} stripe={getStripePromise()}>
+          <DepositModalInner isOpen={isOpen} onClose={handleClose} />
+        </Elements>
+      )}
+    </>
   );
 }
