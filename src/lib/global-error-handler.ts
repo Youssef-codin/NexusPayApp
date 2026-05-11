@@ -14,6 +14,7 @@ function formatError(error: unknown): { message: string; detail?: string } {
 }
 
 function showErrorToast(error: unknown) {
+  if (!navigator.onLine) return;
   const { message, detail } = formatError(error);
 
   if (isDev && detail) {

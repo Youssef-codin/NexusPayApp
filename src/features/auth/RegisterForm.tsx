@@ -3,6 +3,7 @@ import { useForm } from '@tanstack/react-form';
 import axios from 'axios';
 import { registerSchema } from '#/lib/schemas';
 import { useRegister } from '#/hooks/use-auth';
+import { useOnlineStatus } from '#/hooks/use-online-status';
 import { Button } from '#/components/ui/button';
 import { Mail, Lock, ArrowRight, User } from 'lucide-react';
 import { NexusPayMark } from '#/components/NexusPayLogo';
@@ -11,6 +12,7 @@ import { AuthFormField } from './AuthFormField';
 export function RegisterForm() {
   const navigate = useNavigate();
   const register = useRegister();
+  const isOnline = useOnlineStatus();
   const authErrorMessage = getAuthErrorMessage(register.error);
 
   const form = useForm({
@@ -133,7 +135,7 @@ export function RegisterForm() {
           children={([canSubmit, isSubmitting]) => (
             <Button
               type="submit"
-              disabled={register.isPending || isSubmitting || !canSubmit}
+              disabled={register.isPending || isSubmitting || !canSubmit || !isOnline}
               className="w-full h-12 cursor-pointer bg-[#00ff87] text-black hover:bg-[#00e67a] border-2 border-black rounded-none font-bold uppercase tracking-wider shadow-[4px_4px_0px_#000000] hover:shadow-[2px_2px_0px_#000000] hover:translate-x-[2px] hover:translate-y-[2px] active:shadow-none active:translate-x-[4px] active:translate-y-[4px] transition-all text-base disabled:cursor-not-allowed"
             >
               {register.isPending || isSubmitting ? (

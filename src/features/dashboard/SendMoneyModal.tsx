@@ -3,6 +3,7 @@ import { Dialog as DialogPrimitive } from 'radix-ui';
 import { useForm } from '@tanstack/react-form';
 import { Check, X, ArrowLeft, Send, AlertTriangle } from 'lucide-react';
 import { useSendMoney, useTransfers } from '#/hooks/use-transfers';
+import { useOnlineStatus } from '#/hooks/use-online-status';
 import type { UserSearchResult } from '#/types';
 import { StepIndicator, RecipientStep, AmountStep, CATS } from './send-money-shared';
 
@@ -201,6 +202,7 @@ export function SendMoneyModal({ isOpen, onClose, balanceInPiastres }: SendMoney
   const [txId, setTxId] = useState<string | null>(null);
 
   const sendMoney = useSendMoney();
+  const isOnline = useOnlineStatus();
   const { data: transfers = [] } = useTransfers();
   const recentRecipients = useMemo<UserSearchResult[]>(() => {
     const seen = new Set<string>();
@@ -640,7 +642,7 @@ export function SendMoneyModal({ isOpen, onClose, balanceInPiastres }: SendMoney
                     <button
                       type="button"
                       onClick={() => form.handleSubmit()}
-                      disabled={isSubmitting || sendMoney.isPending}
+                      disabled={isSubmitting || sendMoney.isPending || !isOnline}
                       style={{
                         border: '3px solid #000',
                         background: '#00ff87',

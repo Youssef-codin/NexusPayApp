@@ -3,6 +3,7 @@ import { Dialog as DialogPrimitive } from 'radix-ui';
 import { useForm } from '@tanstack/react-form';
 import { X, ArrowLeft, Clock, AlertTriangle } from 'lucide-react';
 import { useSendMoney, useTransfers } from '#/hooks/use-transfers';
+import { useOnlineStatus } from '#/hooks/use-online-status';
 import { useQueryClient } from '@tanstack/react-query';
 import { queryKeys } from '#/lib/query-keys';
 import type { UserSearchResult } from '#/types';
@@ -98,7 +99,7 @@ function ScheduleStep({
               type="date"
               value={dateField.value}
               onChange={(e) => dateField.onChange(e.target.value)}
-              min={new Date().toISOString().slice(0, 10)}
+              min={new Date().toLocaleDateString('en-CA')}
               style={inputStyle}
             />
           </div>
@@ -331,6 +332,7 @@ export function ScheduleMoneyModal({
   const [scheduled, setScheduled] = useState(false);
 
   const sendMoney = useSendMoney();
+  const isOnline = useOnlineStatus();
   const queryClient = useQueryClient();
   const { data: transfers = [] } = useTransfers();
 
@@ -782,7 +784,7 @@ export function ScheduleMoneyModal({
                     <button
                       type="button"
                       onClick={() => form.handleSubmit()}
-                      disabled={isSubmitting || sendMoney.isPending}
+                      disabled={isSubmitting || sendMoney.isPending || !isOnline}
                       style={{
                         border: '3px solid #000',
                         background: '#00ff87',

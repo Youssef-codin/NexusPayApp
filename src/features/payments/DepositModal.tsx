@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useOnlineStatus } from '#/hooks/use-online-status';
 import { Dialog } from 'radix-ui';
 import { Elements, useStripe, useElements, CardNumberElement } from '@stripe/react-stripe-js';
 import { useQueryClient } from '@tanstack/react-query';
@@ -62,6 +63,7 @@ function DepositModalInner({ isOpen, onClose }: DepositModalProps) {
   const [isConfirming, setIsConfirming] = useState(false);
 
   const topUp = useTopUp();
+  const isOnline = useOnlineStatus();
   const { data: wallet } = useWallet();
 
   function handleClose() {
@@ -183,7 +185,7 @@ function DepositModalInner({ isOpen, onClose }: DepositModalProps) {
                 amountEGP={amountEGP}
                 onAmountChange={setAmountEGP}
                 onContinue={handleContinue}
-                isLoading={topUp.isPending}
+                isLoading={topUp.isPending || !isOnline}
               />
             )}
 
@@ -198,7 +200,7 @@ function DepositModalInner({ isOpen, onClose }: DepositModalProps) {
                   amountEGP={amountEGP}
                   onBack={() => setStep(2)}
                   onConfirm={handleConfirm}
-                  isLoading={isConfirming}
+                  isLoading={isConfirming || !isOnline}
                   error={confirmError}
                 />
               )}

@@ -2,6 +2,7 @@ import { useNavigate } from '@tanstack/react-router';
 import { useForm } from '@tanstack/react-form';
 import { loginSchema } from '#/lib/schemas';
 import { useLogin } from '#/hooks/use-auth';
+import { useOnlineStatus } from '#/hooks/use-online-status';
 import { Button } from '#/components/ui/button';
 import { Mail, Lock, ArrowRight } from 'lucide-react';
 import axios from 'axios';
@@ -11,6 +12,7 @@ import { AuthFormField } from './AuthFormField';
 export function LoginForm() {
   const navigate = useNavigate();
   const login = useLogin();
+  const isOnline = useOnlineStatus();
 
   const form = useForm({
     defaultValues: {
@@ -106,7 +108,7 @@ export function LoginForm() {
               type="submit"
               variant="success"
               size="lg"
-              disabled={login.isPending || isSubmitting || !canSubmit}
+              disabled={login.isPending || isSubmitting || !canSubmit || !isOnline}
               className="w-full font-bold tracking-wider"
             >
               {login.isPending || isSubmitting ? (
