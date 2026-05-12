@@ -2,7 +2,7 @@ import { createFileRoute } from '@tanstack/react-router';
 import { LoginForm } from '#/features/auth/LoginForm';
 import { DotGrid } from '#/components/DotGrid';
 import { useDebouncedHover } from '#/hooks/use-debounced-hover';
-import { SecureGateway } from '#/features/dashboard/SecureGateway';
+import { SecureGateway } from '#/features/auth/SecureGateway';
 
 export const Route = createFileRoute('/_public/login')({
   component: Login,
