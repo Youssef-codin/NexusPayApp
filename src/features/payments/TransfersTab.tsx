@@ -29,10 +29,12 @@ function StatCard({
   );
 }
 
-const STATUS_BADGE: Partial<Record<Transfer['status'], { bg: string; text: string }>> = {
-  completed: { bg: '#00ff87', text: '#000' },
-  pending: { bg: '#f5c518', text: '#000' },
-  failed: { bg: '#ba1a1a', text: '#fff' },
+const STATUS_BADGE: Partial<
+  Record<Transfer['status'], { background: string; color: string; borderColor: string }>
+> = {
+  completed: { background: '#e6fff3', color: '#006b3c', borderColor: '#00cc6a' },
+  pending: { background: '#fffbe6', color: '#9a7a00', borderColor: '#f0d800' },
+  failed: { background: '#fff0f0', color: '#ba1a1a', borderColor: '#ffb3b3' },
 };
 
 function TransferRow({ transfer }: { transfer: Transfer }) {
@@ -40,7 +42,11 @@ function TransferRow({ transfer }: { transfer: Transfer }) {
   const counterparty = isDebit ? transfer.to_user.full_name : transfer.from_user.full_name;
   const walletRef = (isDebit ? transfer.to_wallet_id : transfer.from_wallet_id).slice(0, 8);
   const amount = transfer.amount_in_piastres;
-  const badge = STATUS_BADGE[transfer.status] ?? { bg: '#888', text: '#fff' };
+  const badge = STATUS_BADGE[transfer.status] ?? {
+    background: '#f0f0f0',
+    color: '#555',
+    borderColor: '#aaa',
+  };
 
   const date = new Intl.DateTimeFormat('en-US', {
     month: 'short',
@@ -77,15 +83,15 @@ function TransferRow({ transfer }: { transfer: Transfer }) {
       </div>
 
       <div className="flex items-center gap-3">
+        <span
+          className="border px-2 py-0.5 font-mono text-[9px] font-bold uppercase tracking-[0.12em]"
+          style={badge}
+        >
+          {transfer.status}
+        </span>
         <span className={cn('font-bold', isDebit ? 'text-[#ba1a1a]' : 'text-[#005c2e]')}>
           {isDebit ? '-' : '+'}
           {formatCurrency(amount)}
-        </span>
-        <span
-          className="px-2 py-0.5 font-mono text-[9px] font-bold uppercase tracking-[0.16em]"
-          style={{ background: badge.bg, color: badge.text }}
-        >
-          {transfer.status}
         </span>
       </div>
     </div>

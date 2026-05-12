@@ -44,7 +44,12 @@ export function App() {
       .then((res) => {
         const { jwt_token } = res.data;
         const id = decodeJwt(jwt_token).sub as string;
-        useAuthStore.getState().login(jwt_token, { id, email: '', full_name: '' });
+        const existing = useAuthStore.getState().user;
+        useAuthStore.getState().login(jwt_token, {
+          id,
+          email: existing?.email ?? '',
+          full_name: existing?.full_name ?? '',
+        });
       })
       .catch(() => {
         // No valid session — router will redirect to login

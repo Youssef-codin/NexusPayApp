@@ -100,7 +100,7 @@ function ScheduledRow({ item, onCancel }: { item: EnrichedScheduled; onCancel: (
   const note = t?.note as TransferNote | undefined;
   const badgeLabel = note ? note.toUpperCase() : 'TRANSFER';
   const subtitle = note ? NOTE_LABELS[note] : 'Scheduled transfer';
-  const colors = (note && NOTE_COLORS[note]) || NOTE_COLORS['default'];
+  const colors = (note && NOTE_COLORS[note]) || NOTE_COLORS.default;
 
   const status = deriveStatus(item);
   const statusCfg = STATUS_CONFIG[status];
