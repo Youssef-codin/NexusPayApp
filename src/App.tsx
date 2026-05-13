@@ -1,6 +1,6 @@
 import { useState, useLayoutEffect, useEffect } from 'react';
 import { setupGlobalErrorHandlers } from './lib/global-error-handler';
-import axios from 'axios';
+import api from './api/axios';
 import { decodeJwt } from 'jose';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { RouterProvider, createRouter } from '@tanstack/react-router';
@@ -40,7 +40,7 @@ export function App() {
 
   useLayoutEffect(() => {
     axios
-      .post(`${import.meta.env.VITE_API_URL}/auth/refresh`, {}, { withCredentials: true })
+      .post('/auth/refresh', {}, { withCredentials: true })
       .then((res) => {
         const { jwt_token } = res.data;
         const id = decodeJwt(jwt_token).sub as string;
