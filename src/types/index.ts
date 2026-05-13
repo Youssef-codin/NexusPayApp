@@ -81,6 +81,7 @@ export interface TopUpResponse {
 
 export interface UserSearchResult {
   id: string;
+  wallet_id?: string;
   full_name: string;
 }
 

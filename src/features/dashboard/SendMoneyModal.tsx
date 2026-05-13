@@ -3,6 +3,7 @@ import { Dialog as DialogPrimitive } from 'radix-ui';
 import { useForm } from '@tanstack/react-form';
 import { Check, X, ArrowLeft, Send, AlertTriangle } from 'lucide-react';
 import { useSendMoney, useTransfers } from '#/hooks/use-transfers';
+import { walletApi } from '#/api/client';
 import { useOnlineStatus } from '#/hooks/use-online-status';
 import type { UserSearchResult } from '#/types';
 import { StepIndicator, RecipientStep, AmountStep, CATS } from './send-money-shared';
@@ -210,7 +211,11 @@ export function SendMoneyModal({ isOpen, onClose, balanceInPiastres }: SendMoney
     for (const t of [...transfers].reverse()) {
       if (t.direction === 'debit' && !seen.has(t.to_wallet_id)) {
         seen.add(t.to_wallet_id);
-        results.push({ id: t.to_wallet_id, full_name: t.to_user.full_name });
+        results.push({
+          id: t.to_wallet_id,
+          wallet_id: t.to_wallet_id,
+          full_name: t.to_user.full_name,
+        });
         if (results.length === 5) break;
       }
     }
@@ -250,9 +255,11 @@ export function SendMoneyModal({ isOpen, onClose, balanceInPiastres }: SendMoney
     setAnimKey((k) => k + 1);
   };
 
-  const handleSelectRecipient = (r: UserSearchResult) => {
+  const handleSelectRecipient = async (r: UserSearchResult) => {
     setRecipient(r);
-    form.setFieldValue('to_wallet_id', r.id);
+    const walletId = r.wallet_id ?? (await walletApi.getWalletByUserId(r.id)).id;
+    form.setFieldValue('to_wallet_id', walletId);
+    setRecipient({ ...r, wallet_id: walletId });
   };
 
   const handleClearRecipient = () => {
