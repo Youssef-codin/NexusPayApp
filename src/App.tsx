@@ -40,7 +40,7 @@ export function App() {
 
   useLayoutEffect(() => {
     axios
-      .post('http://localhost:3000/auth/refresh', {}, { withCredentials: true })
+      .post(`${import.meta.env.VITE_API_URL}/auth/refresh`, {}, { withCredentials: true })
       .then((res) => {
         const { jwt_token } = res.data;
         const id = decodeJwt(jwt_token).sub as string;
