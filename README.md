@@ -1,6 +1,17 @@
-# Nexus — Payment Wallet Application
+# Nexus — Payment Wallet
 
-A React SPA for sending money, scheduling transfers, and managing wallet balance.
+![React](https://img.shields.io/badge/React-19-61DAFB?style=flat-square&logo=react&logoColor=black)
+![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?style=flat-square&logo=typescript&logoColor=white)
+![Bun](https://img.shields.io/badge/Bun-runtime-fbf0df?style=flat-square&logo=bun&logoColor=black)
+![Vite](https://img.shields.io/badge/Vite-8-646CFF?style=flat-square&logo=vite&logoColor=white)
+![Tailwind](https://img.shields.io/badge/Tailwind-v4-06B6D4?style=flat-square&logo=tailwindcss&logoColor=white)
+![Biome](https://img.shields.io/badge/Biome-linter-60A5FA?style=flat-square&logo=biome&logoColor=white)
+
+**[nexuspay.youssef-alshenawy.workers.dev](https://nexuspay.youssef-alshenawy.workers.dev/)**
+
+Send money, schedule transfers, manage your wallet balance.
+
+---
 
 ## Quick Start
 
@@ -19,8 +30,6 @@ Visit `http://localhost:8000`
 |---------|-------------|
 | `bun run dev` | Start dev server on port 8000 |
 | `bun run build` | Production build |
-| `bun run preview` | Preview production build |
-| `bun run test` | Run tests (Vitest) |
 | `bun run lint` | Lint with Biome |
 | `bun run format` | Format with Biome |
 
@@ -28,186 +37,25 @@ Visit `http://localhost:8000`
 
 ## Tech Stack
 
-- **Runtime**: Bun
-- **Build**: Vite 8
-- **Framework**: React 19
-- **Language**: TypeScript
-- **Routing**: TanStack Router (file-based)
-- **Data Fetching**: TanStack Query v5
-- **State**: Zustand + persist middleware
-- **Forms**: React Hook Form + Zod
-- **Styling**: Tailwind CSS v4 + shadcn/ui
-- **Icons**: Lucide React
-
----
-
-## Project Structure
-
-```
-src/
-├── api/           # Axios + typed API client
-├── components/    # Shared components + shadcn/ui
-├── features/     # Feature-based modules (auth, wallet, transfers, scheduled)
-├── hooks/        # TanStack Query hooks
-├── lib/          # Utilities, schemas, formatters
-├── routes/       # TanStack Router file-based routing
-├── store/        # Zustand auth store
-└── types/        # TypeScript interfaces
-```
-
----
-
-## Design System
-
-The UI uses a **Neo-Brutalist** design:
-
-- **Background**: `#fcf8ff` (light surface)
-- **Borders**: 2px/4px solid black
-- **Shadows**: Hard offset `4px 4px 0px #000000`
-- **Accent**: Electric green `#00ff87`
-- **Font**: Space Grotesk
-- **Border-radius**: 0px everywhere
-
----
-
-## API Integration
-
-The frontend connects to a backend at `/api`. Key endpoints:
-
-### Authentication
-- `POST /auth/login` → `{jwt_token, refresh_token, email, full_name}`
-- `POST /auth/register` → `{jwt_token, refresh_token, ...}`
-- `POST /auth/refresh` → `{jwt_token, refresh_token}`
-
-### Wallet
-- `GET /wallet/` → `{id, user_id, balance, created_at}`
-- `PATCH /wallet/` with `{amount}` → `{client_secret, amount, currency}`
-
-### Transfers
-- `GET /transfers/` → `{from_wallet_id, transfers: [...]}`
-- `GET /transfers/:id` → `{transfer: {...}}`
-- `POST /transfers/` with `{to_wallet_id, amount_in_piastres, note?, scheduled_at?}`
-
-### Scheduled
-- `GET /transfers/scheduled/` → `{scheduled_transfers: [...]}`
-- `DELETE /transfers/scheduled/:id` → `{cancelled_id}`
-
-### Users
-- `GET /users?name=<query>` → Search recipients
-
-**Note**: All amounts are in **piastres** (100 piastres = 1 EGP).
-
----
-
-## Auth Flow
-
-1. User logs in → stores `jwt_token` and `refresh_token` in Zustand + localStorage
-2. Every request gets `Authorization: Bearer <jwt_token>` via axios interceptor
-3. On 401, axios automatically tries to refresh using `refresh_token`
-4. If refresh fails, user is logged out
-
----
-
-## Adding New Features
-
-### New API Endpoint
-Add to `src/api/client.ts`:
-```typescript
-export const newApi = {
-  something: () => client.get<ReturnType>("/endpoint"),
-}
-```
-
-### New Type
-Add to `src/types/index.ts`:
-```typescript
-export interface NewType {
-  field: string
-}
-```
-
-### New Form
-1. Add Zod schema to `src/lib/schemas.ts`
-2. Create component in `src/features/<feature>/`
-3. Use RHF + zodResolver + TanStack Query mutation
-
-### New Route
-Add file to `src/routes/` following TanStack Router naming:
-- `_prefix/filename.tsx` → `/prefix/filename`
-- `_prefix/_index.tsx` → `/prefix` (index route)
-
----
-
-## For Developers
-
-- Use `#/` path alias for imports (e.g., `import { useAuth } from "#/hooks/use-auth"`)
-- shadcn/ui components are in `src/components/ui/` — they're copied, not npm packages
-- Run `bun run build` before deploying — build must pass
-- Don't commit secrets — use env variables for API keys
-
----
-
-## Troubleshooting
-
-**Build fails?**
-```bash
-bun run build
-```
-
-**Linting errors?**
-```bash
-bun run lint --write  # auto-fix
-```
-
-**Dev server not starting?**
-```bash
-rm -rf node_modules/.cache
-bun run dev
-```
+| | |
+|--|--|
+| **Framework** | React 19 + TypeScript |
+| **Build** | Vite 8 + Bun |
+| **Routing** | TanStack Router (file-based) |
+| **Data Fetching** | TanStack Query v5 |
+| **State** | Zustand + persist |
+| **Forms** | React Hook Form + Zod |
+| **Styling** | Tailwind v4 + shadcn/ui |
+| **Payments** | Stripe |
 
 ---
 
 ## Testing Payments (Stripe)
 
-The app uses Stripe for wallet top-ups. In development, use Stripe's test card numbers — no real money is charged.
-
-### Test Cards
-
-| Card Number | Result |
-|---|---|
+| Card | Result |
+|------|--------|
 | `4242 4242 4242 4242` | Success |
-| `4000 0000 0000 9995` | Declined (insufficient funds) |
-| `4000 0027 6000 3184` | Requires 3D Secure auth |
+| `4000 0000 0000 9995` | Declined |
+| `4000 0027 6000 3184` | 3D Secure |
 
-**Expiry**: any future date (e.g. `12/34`)
-**CVC**: any 3 digits (e.g. `123`)
-**ZIP**: any 5 digits (e.g. `12345`)
-
-### How to top up
-
-1. Go to the dashboard and click **Add Money**
-2. Enter an amount (in EGP)
-3. Enter a test card number above
-4. Complete the Stripe payment form
-
-### Environment Setup
-
-Copy `.env.example` to `.env` and fill in your Stripe test keys:
-
-```bash
-cp .env.example .env
-```
-
-Get your test keys from the [Stripe Dashboard](https://dashboard.stripe.com/test/apikeys) (make sure you're in **Test mode**).
-
----
-
-## Notes for LLMs
-
-This project uses specific patterns. See `AGENTS.md` (if exists) or remember:
-
-- **snake_case** for API fields (e.g., `jwt_token`, `amount_in_piastres`)
-- **camelCase** for TypeScript/React
-- Zustand store uses `persist` middleware — check localStorage if auth state persists unexpectedly
-- TanStack Router auto-generates `routeTree.gen.ts` — don't edit manually
-- Forms use Zod schemas, not manual validation
+Expiry: any future date · CVC: any 3 digits · ZIP: any 5 digits
