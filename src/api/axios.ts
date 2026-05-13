@@ -65,11 +65,7 @@ api.interceptors.response.use(
       isRefreshing = true;
 
       try {
-        const response = await axios.post(
-          `${import.meta.env.VITE_API_URL}/auth/refresh`,
-          {},
-          { withCredentials: true }
-        );
+        const response = await axios.post(`/auth/refresh`, {}, { withCredentials: true });
         const { jwt_token } = response.data;
 
         useAuthStore.getState().setToken(jwt_token);
