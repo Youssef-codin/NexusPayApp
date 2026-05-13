@@ -6,7 +6,7 @@
 ![Vite](https://img.shields.io/badge/Vite-8-646CFF?style=flat-square&logo=vite&logoColor=white)
 ![Tailwind](https://img.shields.io/badge/Tailwind-v4-06B6D4?style=flat-square&logo=tailwindcss&logoColor=white)
 ![Biome](https://img.shields.io/badge/Biome-linter-60A5FA?style=flat-square&logo=biome&logoColor=white)
-[![Live](https://img.shields.io/badge/LIVE-nexuspay.youssef--alshenawy.workers.dev-00ff87?style=for-the-badge&logoColor=black)](https://nexuspay.youssef-alshenawy.workers.dev/)
+### [Visit the website here!](https://nexuspay.youssef-alshenawy.workers.dev/)
 [![Backend](https://img.shields.io/badge/Backend-Youssef--codin%2FNexusPay-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/Youssef-codin/NexusPay)
 
 Send money, schedule transfers, manage your wallet balance.
