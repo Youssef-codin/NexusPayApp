@@ -229,6 +229,7 @@ export function SendMoneyModal({ isOpen, onClose, balanceInPiastres }: SendMoney
       const result = await sendMoney.mutateAsync({
         to_wallet_id: value.to_wallet_id,
         amount_in_piastres: piastres,
+        note: value.category || undefined,
       });
       setTxId(result.id);
     },

@@ -371,6 +371,7 @@ export function ScheduleMoneyModal({
         to_wallet_id: value.to_wallet_id,
         amount_in_piastres: piastres,
         scheduled_at: scheduledAt,
+        note: value.category || undefined,
       });
       queryClient.invalidateQueries({ queryKey: queryKeys.scheduled.list() });
       setScheduled(true);
