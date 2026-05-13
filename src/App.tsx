@@ -39,7 +39,7 @@ export function App() {
   useEffect(() => setupGlobalErrorHandlers(), []);
 
   useLayoutEffect(() => {
-    axios
+    api
       .post('/auth/refresh', {}, { withCredentials: true })
       .then((res) => {
         const { jwt_token } = res.data;
