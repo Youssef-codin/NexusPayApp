@@ -98,13 +98,10 @@ function NavBar() {
   ];
   return (
     <nav
+      className="landing-nav-inner"
       style={{
         background: '#000',
         borderBottom: '2px solid #111',
-        padding: '0 56px',
-        height: 76,
-        display: 'flex',
-        alignItems: 'center',
         position: 'sticky',
         top: 0,
         zIndex: 40,
@@ -149,7 +146,7 @@ function NavBar() {
         </span>
       </Link>
 
-      <div style={{ display: 'flex', gap: 36, flex: 1 }}>
+      <div className="landing-nav-links">
         {links.map((l) => (
           <a
             key={l.label}
@@ -234,18 +231,7 @@ function Hero() {
           pointerEvents: 'none',
         }}
       />
-      <div
-        style={{
-          position: 'relative',
-          maxWidth: 1440,
-          margin: '0 auto',
-          padding: '88px 56px 64px',
-          display: 'grid',
-          gridTemplateColumns: '1.05fr 1fr',
-          gap: 72,
-          alignItems: 'center',
-        }}
-      >
+      <div className="landing-hero-inner">
         <div>
           <div
             style={{
@@ -313,7 +299,13 @@ function Hero() {
 
           <div
             className="landing-reveal"
-            style={{ animationDelay: '0.16s', display: 'flex', gap: 14, marginBottom: 48 }}
+            style={{
+              animationDelay: '0.16s',
+              display: 'flex',
+              gap: 14,
+              marginBottom: 48,
+              flexWrap: 'wrap',
+            }}
           >
             <Link
               to="/register"
@@ -358,11 +350,9 @@ function Hero() {
           </div>
 
           <div
-            className="landing-reveal"
+            className="landing-reveal landing-hero-stats"
             style={{
               animationDelay: '0.24s',
-              display: 'flex',
-              gap: 0,
               borderTop: '2px solid #000',
               borderBottom: '2px solid #000',
             }}
@@ -408,7 +398,9 @@ function Hero() {
           </div>
         </div>
 
-        <HeroPreview />
+        <div className="landing-hero-preview-col">
+          <HeroPreview />
+        </div>
       </div>
     </section>
   );
@@ -749,18 +741,7 @@ function HeroPreview() {
 function StripeStrip() {
   return (
     <section style={{ background: '#000', borderBottom: '3px solid #000' }}>
-      <div
-        style={{
-          maxWidth: 1440,
-          margin: '0 auto',
-          padding: '28px 56px',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          gap: 24,
-          flexWrap: 'wrap',
-        }}
-      >
+      <div className="landing-stripe-inner">
         <div
           style={{
             flexShrink: 0,
@@ -870,10 +851,10 @@ function FeaturesSection() {
   return (
     <section
       id="features"
+      className="landing-section-pad"
       style={{
         background: '#fcf8ff',
         borderBottom: '3px solid #000',
-        padding: '88px 56px',
       }}
     >
       <div style={{ maxWidth: 1440, margin: '0 auto' }}>
@@ -889,14 +870,7 @@ function FeaturesSection() {
           }
           subtitle="Built for everyday spending between NexusPay users. No subscriptions, no minimums, no nonsense."
         />
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(2, 1fr)',
-            gap: 24,
-            marginTop: 64,
-          }}
-        >
+        <div className="landing-feat-grid">
           {FEATURES.map((f, i) => (
             <FeatureCard key={i} {...f} />
           ))}
@@ -914,14 +888,7 @@ interface SectionHeadProps {
 
 function SectionHead({ kicker, title, subtitle }: SectionHeadProps) {
   return (
-    <div
-      style={{
-        display: 'grid',
-        gridTemplateColumns: '1fr 1fr',
-        gap: 56,
-        alignItems: 'end',
-      }}
-    >
+    <div className="landing-section-head">
       <div>
         <div
           style={{
@@ -1372,23 +1339,15 @@ function HowItWorks() {
   return (
     <section
       id="how"
+      className="landing-section-pad"
       style={{
         background: '#0a0a0a',
         color: '#fff',
         borderBottom: '3px solid #000',
-        padding: '88px 56px',
       }}
     >
       <div style={{ maxWidth: 1440, margin: '0 auto' }}>
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: '1fr 1fr',
-            gap: 56,
-            alignItems: 'end',
-            marginBottom: 72,
-          }}
-        >
+        <div className="landing-hiw-head">
           <div>
             <div
               style={{
@@ -1441,23 +1400,9 @@ function HowItWorks() {
           </p>
         </div>
 
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(3, 1fr)',
-            gap: 0,
-            border: '2px solid #1a1a1a',
-          }}
-        >
-          {steps.map((s, i) => (
-            <div
-              key={s.n}
-              style={{
-                padding: '40px 32px 48px',
-                borderRight: i < 2 ? '2px solid #1a1a1a' : 'none',
-                position: 'relative',
-              }}
-            >
+        <div className="landing-steps-grid">
+          {steps.map((s) => (
+            <div key={s.n} className="landing-step-item">
               <div
                 style={{
                   fontFamily: SANS,
@@ -1521,11 +1466,11 @@ function CTA() {
   return (
     <section
       id="cta"
+      className="landing-cta-pad"
       style={{
         background: '#0a0a0a',
         color: '#fff',
         borderBottom: '3px solid #000',
-        padding: '104px 56px',
         position: 'relative',
         overflow: 'hidden',
       }}
@@ -1713,17 +1658,9 @@ function Footer() {
     { h: 'LEGAL', ls: ['Terms (lol)', 'Privacy', 'Cookies'] },
   ];
   return (
-    <footer style={{ background: '#000', color: '#888', padding: '64px 56px 32px' }}>
+    <footer className="landing-footer-outer" style={{ background: '#000', color: '#888' }}>
       <div style={{ maxWidth: 1440, margin: '0 auto' }}>
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: '1.8fr repeat(3, 1fr)',
-            gap: 56,
-            paddingBottom: 56,
-            borderBottom: '1px solid #1a1a1a',
-          }}
-        >
+        <div className="landing-footer-grid">
           <div>
             <div
               style={{

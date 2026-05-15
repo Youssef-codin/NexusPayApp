@@ -44,7 +44,7 @@ export function RegisterForm() {
   });
 
   return (
-    <div className="p-8 md:p-10">
+    <div className="p-6 sm:p-8 md:p-10">
       {/* Logo */}
       <div className="flex items-center gap-2.5 mb-8 text-black">
         <NexusPayMark size={20} />

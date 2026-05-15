@@ -12,7 +12,7 @@ function Register() {
   const { hovered: cardHovered, hoverHandlers } = useDebouncedHover(120);
 
   return (
-    <div className="min-h-screen bg-[#fcf8ff] relative overflow-hidden flex items-center justify-center">
+    <div className="min-h-screen bg-[#fcf8ff] relative overflow-x-hidden overflow-y-auto flex items-center justify-center">
       <SecureGateway />
 
       <DotGrid
@@ -28,7 +28,7 @@ function Register() {
         disabled={cardHovered}
       />
 
-      <div className="relative z-10 w-full max-w-[420px] mx-4" {...hoverHandlers}>
+      <div className="relative z-10 w-full max-w-[420px] mx-4 my-8" {...hoverHandlers}>
         <div className="bg-white border-2 border-black shadow-[6px_6px_0px_#000000]">
           <RegisterForm />
         </div>
