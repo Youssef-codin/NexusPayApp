@@ -31,7 +31,7 @@ const CATEGORY_COLORS: Record<NonNullable<ActivityItem['note']>, { bg: string; t
   other: { bg: 'bg-zinc-500', text: 'text-white' },
 };
 
-function formatOccurredAt(iso: string): string {
+function formatOccurredAt(iso: string): { full: string; short: string } {
   const date = new Date(iso);
   const datePart = new Intl.DateTimeFormat('en-US', {
     month: 'short',
@@ -43,7 +43,11 @@ function formatOccurredAt(iso: string): string {
     minute: '2-digit',
     hour12: false,
   }).format(date);
-  return `${datePart} - ${timePart}`;
+  const shortPart = new Intl.DateTimeFormat('en-US', {
+    month: 'short',
+    day: 'numeric',
+  }).format(date);
+  return { full: `${datePart} - ${timePart}`, short: shortPart };
 }
 
 export function TransactionRow({ item }: TransactionRowProps) {
@@ -52,10 +56,12 @@ export function TransactionRow({ item }: TransactionRowProps) {
   const sign = isPositive ? '+' : '-';
   const absAmount = Math.abs(item.amountInPiastres);
 
+  const { full, short } = formatOccurredAt(item.occurredAt);
+
   return (
-    <div className="flex items-center gap-4 border-2 border-black bg-white p-4 shadow-[4px_4px_0px_#000000]">
-      <div className="flex h-12 w-12 shrink-0 items-center justify-center bg-black text-[#00ff87]">
-        <Icon className="h-5 w-5" />
+    <div className="flex items-center gap-3 border-2 border-black bg-white p-3 shadow-[4px_4px_0px_#000000] sm:gap-4 sm:p-4">
+      <div className="flex h-10 w-10 shrink-0 items-center justify-center bg-black text-[#00ff87] sm:h-12 sm:w-12">
+        <Icon className="h-4 w-4 sm:h-5 sm:w-5" />
       </div>
 
       <div className="min-w-0 flex-1">
@@ -63,7 +69,8 @@ export function TransactionRow({ item }: TransactionRowProps) {
           {item.name}
         </p>
         <p className="mt-1 text-xs font-medium text-neutral-500">
-          {formatOccurredAt(item.occurredAt)}
+          <span className="sm:hidden">{short}</span>
+          <span className="hidden sm:inline">{full}</span>
         </p>
       </div>
 

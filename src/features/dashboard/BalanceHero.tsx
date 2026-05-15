@@ -28,15 +28,17 @@ export function BalanceHero({ balanceInPiastres, onSend, onDeposit }: BalanceHer
         <Wallet className="size-100 -rotate-12 stroke-1" />
       </div>
 
-      <div className="relative flex flex-col gap-10 p-10 md:flex-row md:items-center md:justify-between">
+      <div className="relative flex flex-col gap-6 p-6 sm:gap-10 sm:p-10 md:flex-row md:items-center md:justify-between">
         <div className="space-y-3">
           <p className="text-sm font-black uppercase tracking-[0.4em] text-black/50">
             Total Balance
           </p>
           <div className="flex items-baseline leading-none text-black">
-            <span className="text-5xl font-black opacity-30">EGP</span>
-            <span className="ml-5 text-7xl font-bold tracking-tighter md:text-8xl">{integer}</span>
-            <span className="ml-1 text-4xl font-bold opacity-30">.{decimal}</span>
+            <span className="text-3xl font-black opacity-30 sm:text-5xl">EGP</span>
+            <span className="ml-3 text-5xl font-bold tracking-tighter sm:ml-5 sm:text-7xl md:text-8xl">
+              {integer}
+            </span>
+            <span className="ml-1 text-2xl font-bold opacity-30 sm:text-4xl">.{decimal}</span>
           </div>
         </div>
 
