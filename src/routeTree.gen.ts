@@ -13,10 +13,11 @@ import { Route as PublicRouteImport } from './routes/_public'
 import { Route as AuthRouteImport } from './routes/_auth'
 import { Route as PublicRegisterRouteImport } from './routes/_public/register'
 import { Route as PublicLoginRouteImport } from './routes/_public/login'
+import { Route as PublicIndexRouteImport } from './routes/_public/_index'
 import { Route as AuthTransfersRouteImport } from './routes/_auth/transfers'
 import { Route as AuthScheduledRouteImport } from './routes/_auth/scheduled'
 import { Route as AuthProfileRouteImport } from './routes/_auth/profile'
-import { Route as AuthIndexRouteImport } from './routes/_auth/_index'
+import { Route as AuthDashboardRouteImport } from './routes/_auth/dashboard'
 import { Route as AuthPaymentsIndexRouteImport } from './routes/_auth/payments/index'
 import { Route as AuthTransfersTransferIdRouteImport } from './routes/_auth/transfers.$transferId'
 import { Route as AuthPaymentsTransfersRouteImport } from './routes/_auth/payments/transfers'
@@ -40,6 +41,10 @@ const PublicLoginRoute = PublicLoginRouteImport.update({
   path: '/login',
   getParentRoute: () => PublicRoute,
 } as any)
+const PublicIndexRoute = PublicIndexRouteImport.update({
+  id: '/_index',
+  getParentRoute: () => PublicRoute,
+} as any)
 const AuthTransfersRoute = AuthTransfersRouteImport.update({
   id: '/transfers',
   path: '/transfers',
@@ -55,8 +60,9 @@ const AuthProfileRoute = AuthProfileRouteImport.update({
   path: '/profile',
   getParentRoute: () => AuthRoute,
 } as any)
-const AuthIndexRoute = AuthIndexRouteImport.update({
-  id: '/_index',
+const AuthDashboardRoute = AuthDashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
   getParentRoute: () => AuthRoute,
 } as any)
 const AuthPaymentsIndexRoute = AuthPaymentsIndexRouteImport.update({
@@ -81,7 +87,8 @@ const AuthPaymentsScheduledRoute = AuthPaymentsScheduledRouteImport.update({
 } as any)
 
 export interface FileRoutesByFullPath {
-  '/': typeof AuthIndexRoute
+  '/': typeof PublicIndexRoute
+  '/dashboard': typeof AuthDashboardRoute
   '/profile': typeof AuthProfileRoute
   '/scheduled': typeof AuthScheduledRoute
   '/transfers': typeof AuthTransfersRouteWithChildren
@@ -93,7 +100,8 @@ export interface FileRoutesByFullPath {
   '/payments/': typeof AuthPaymentsIndexRoute
 }
 export interface FileRoutesByTo {
-  '/': typeof AuthIndexRoute
+  '/': typeof PublicIndexRoute
+  '/dashboard': typeof AuthDashboardRoute
   '/profile': typeof AuthProfileRoute
   '/scheduled': typeof AuthScheduledRoute
   '/transfers': typeof AuthTransfersRouteWithChildren
@@ -108,10 +116,11 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_auth': typeof AuthRouteWithChildren
   '/_public': typeof PublicRouteWithChildren
-  '/_auth/_index': typeof AuthIndexRoute
+  '/_auth/dashboard': typeof AuthDashboardRoute
   '/_auth/profile': typeof AuthProfileRoute
   '/_auth/scheduled': typeof AuthScheduledRoute
   '/_auth/transfers': typeof AuthTransfersRouteWithChildren
+  '/_public/_index': typeof PublicIndexRoute
   '/_public/login': typeof PublicLoginRoute
   '/_public/register': typeof PublicRegisterRoute
   '/_auth/payments/scheduled': typeof AuthPaymentsScheduledRoute
@@ -123,6 +132,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/dashboard'
     | '/profile'
     | '/scheduled'
     | '/transfers'
@@ -135,6 +145,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/dashboard'
     | '/profile'
     | '/scheduled'
     | '/transfers'
@@ -148,10 +159,11 @@ export interface FileRouteTypes {
     | '__root__'
     | '/_auth'
     | '/_public'
-    | '/_auth/_index'
+    | '/_auth/dashboard'
     | '/_auth/profile'
     | '/_auth/scheduled'
     | '/_auth/transfers'
+    | '/_public/_index'
     | '/_public/login'
     | '/_public/register'
     | '/_auth/payments/scheduled'
@@ -195,6 +207,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PublicLoginRouteImport
       parentRoute: typeof PublicRoute
     }
+    '/_public/_index': {
+      id: '/_public/_index'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof PublicIndexRouteImport
+      parentRoute: typeof PublicRoute
+    }
     '/_auth/transfers': {
       id: '/_auth/transfers'
       path: '/transfers'
@@ -216,11 +235,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthProfileRouteImport
       parentRoute: typeof AuthRoute
     }
-    '/_auth/_index': {
-      id: '/_auth/_index'
-      path: ''
-      fullPath: '/'
-      preLoaderRoute: typeof AuthIndexRouteImport
+    '/_auth/dashboard': {
+      id: '/_auth/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof AuthDashboardRouteImport
       parentRoute: typeof AuthRoute
     }
     '/_auth/payments/': {
@@ -267,7 +286,7 @@ const AuthTransfersRouteWithChildren = AuthTransfersRoute._addFileChildren(
 )
 
 interface AuthRouteChildren {
-  AuthIndexRoute: typeof AuthIndexRoute
+  AuthDashboardRoute: typeof AuthDashboardRoute
   AuthProfileRoute: typeof AuthProfileRoute
   AuthScheduledRoute: typeof AuthScheduledRoute
   AuthTransfersRoute: typeof AuthTransfersRouteWithChildren
@@ -277,7 +296,7 @@ interface AuthRouteChildren {
 }
 
 const AuthRouteChildren: AuthRouteChildren = {
-  AuthIndexRoute: AuthIndexRoute,
+  AuthDashboardRoute: AuthDashboardRoute,
   AuthProfileRoute: AuthProfileRoute,
   AuthScheduledRoute: AuthScheduledRoute,
   AuthTransfersRoute: AuthTransfersRouteWithChildren,
@@ -289,11 +308,13 @@ const AuthRouteChildren: AuthRouteChildren = {
 const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
 
 interface PublicRouteChildren {
+  PublicIndexRoute: typeof PublicIndexRoute
   PublicLoginRoute: typeof PublicLoginRoute
   PublicRegisterRoute: typeof PublicRegisterRoute
 }
 
 const PublicRouteChildren: PublicRouteChildren = {
+  PublicIndexRoute: PublicIndexRoute,
   PublicLoginRoute: PublicLoginRoute,
   PublicRegisterRoute: PublicRegisterRoute,
 }

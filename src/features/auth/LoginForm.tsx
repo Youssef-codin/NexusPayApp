@@ -29,7 +29,7 @@ export function LoginForm() {
     onSubmit: async ({ value }) => {
       try {
         await login.mutateAsync(value);
-        navigate({ to: '/' });
+        navigate({ to: '/dashboard' });
       } catch {
         // Error is handled by mutation state
       }

@@ -143,6 +143,91 @@ body {
   }
 }
 
+/* ─── Landing page animations ─────────────────────────────────────────────── */
+@keyframes landing-ticker {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+@keyframes landing-blink {
+  0%,
+  49% {
+    opacity: 1;
+  }
+  50%,
+  100% {
+    opacity: 0;
+  }
+}
+@keyframes landing-float-up {
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+@keyframes landing-slide-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.landing-ticker {
+  animation: landing-ticker 40s linear infinite;
+}
+.landing-blink {
+  animation: landing-blink 1s steps(1) infinite;
+}
+.landing-float {
+  animation: landing-float-up 3s ease-in-out infinite;
+}
+.landing-reveal {
+  animation: landing-slide-in-up 0.6s ease-out backwards;
+}
+
+.landing-hard-btn:hover {
+  transform: translate(-2px, -2px);
+}
+.landing-hard-btn:active {
+  transform: translate(2px, 2px);
+}
+
+.landing-feat-card:hover {
+  transform: translate(-4px, -4px);
+  box-shadow: 12px 12px 0 #000;
+}
+
+.landing-nav-link::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -22px;
+  height: 3px;
+  background: #00ff87;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.18s ease;
+}
+.landing-nav-link:hover::after {
+  transform: scaleX(1);
+}
+.landing-nav-link:hover {
+  color: #fff;
+}
+
 * {
   scrollbar-width: thin;
   scrollbar-color: #00ff87 transparent;

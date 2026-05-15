@@ -36,7 +36,7 @@ export function RegisterForm() {
           password: value.password,
           full_name: value.full_name,
         });
-        navigate({ to: '/' });
+        navigate({ to: '/dashboard' });
       } catch {
         // Error is rendered from mutation state.
       }

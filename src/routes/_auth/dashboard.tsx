@@ -9,7 +9,7 @@ import { useWallet } from '#/hooks/use-wallet';
 import { useTransfers } from '#/hooks/use-transfers';
 import { transformTransfersToActivity, computeMonthSummary } from '#/lib/dashboard-utils';
 
-export const Route = createFileRoute('/_auth/_index')({
+export const Route = createFileRoute('/_auth/dashboard')({
   component: Dashboard,
 });
 

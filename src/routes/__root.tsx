@@ -55,7 +55,7 @@ function RootNotFound() {
             asChild
             className="bg-[#00ff87] text-black hover:bg-[#00cc6a] border-2 border-black"
           >
-            <Link to="/">Go Home</Link>
+            <Link to="/dashboard">Go Home</Link>
           </Button>
           <Button asChild variant="outline" className="border-2 border-black text-black">
             <Link to="/login">Back To Login</Link>

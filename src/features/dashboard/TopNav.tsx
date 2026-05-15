@@ -13,7 +13,7 @@ import { cn } from '#/lib/utils';
 import { useAuthStore } from '#/store/auth-store';
 
 const NAV_ITEMS = [
-  { label: 'Dashboard', to: '/' as const },
+  { label: 'Dashboard', to: '/dashboard' as const },
   { label: 'Payments', to: '/payments' as const },
   { label: 'Analytics', to: '/analytics' as const },
 ] as const;
@@ -21,7 +21,7 @@ const NAV_ITEMS = [
 function NavLink({ label, to }: { label: string; to: string }) {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
 
-  const active = to === '/' ? pathname === '/' : pathname.startsWith(to);
+  const active = to === '/dashboard' ? pathname === '/dashboard' : pathname.startsWith(to);
 
   const comingSoon = label === 'Analytics';
 
@@ -123,7 +123,7 @@ export function TopNav() {
   return (
     <header className="bg-black text-white">
       <div className="mx-auto flex h-16 max-w-[1600px] items-center justify-between gap-8 px-4 sm:px-8">
-        <Link to="/" className="flex items-center gap-2 text-white">
+        <Link to="/dashboard" className="flex items-center gap-2 text-white">
           <span className="flex h-8 w-8 items-center justify-center bg-[#00ff87] text-black">
             <NexusPayLogo type="icon" size={20} />
           </span>
