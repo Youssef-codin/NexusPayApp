@@ -58,7 +58,7 @@ function TransferRow({ transfer }: { transfer: Transfer }) {
 
   return (
     <div
-      className="flex items-center gap-4 border-b border-neutral-100 bg-white px-5 py-3.5 last:border-b-0"
+      className="flex items-center gap-3 border-b border-neutral-100 bg-white px-3 py-3.5 last:border-b-0 sm:gap-4 sm:px-5"
       style={{ borderLeft: `4px solid ${isDebit ? '#ff6b6b' : '#00ff87'}` }}
     >
       <div
@@ -75,16 +75,16 @@ function TransferRow({ transfer }: { transfer: Transfer }) {
       <div className="min-w-0 flex-1">
         <div className="flex items-baseline gap-2">
           <span className="font-bold text-black">{counterparty}</span>
-          <span className="font-mono text-[10px] font-bold text-neutral-400">
+          <span className="hidden font-mono text-[10px] font-bold text-neutral-400 sm:inline">
             NXP ••••{walletRef}
           </span>
         </div>
         <p className="mt-0.5 font-mono text-[10px] text-neutral-400">{date}</p>
       </div>
 
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-2 sm:gap-3">
         <span
-          className="border px-2 py-0.5 font-mono text-[9px] font-bold uppercase tracking-[0.12em]"
+          className="hidden border px-2 py-0.5 font-mono text-[9px] font-bold uppercase tracking-[0.12em] sm:inline"
           style={badge}
         >
           {transfer.status}
@@ -124,7 +124,7 @@ export function TransfersTab({ onNewTransfer }: TransfersTabProps) {
         <button
           type="button"
           onClick={onNewTransfer}
-          className="flex shrink-0 items-center gap-2 border-4 border-black bg-[#00ff87] px-6 py-3 text-sm font-bold uppercase tracking-wider shadow-[4px_4px_0_#000000] transition-all hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[6px_6px_0_#000000]"
+          className="flex w-full shrink-0 items-center justify-center gap-2 border-4 border-black bg-[#00ff87] px-6 py-3 text-sm font-bold uppercase tracking-wider shadow-[4px_4px_0_#000000] transition-all hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[6px_6px_0_#000000] sm:w-auto"
         >
           <ArrowUpRight className="h-4 w-4 stroke-[3]" />
           New Transfer

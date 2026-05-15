@@ -39,7 +39,7 @@ function PaymentRow({ payment }: { payment: Payment }) {
 
   return (
     <div
-      className="flex items-center gap-4 border-b border-neutral-100 bg-white px-5 py-3.5 last:border-b-0"
+      className="flex items-center gap-3 border-b border-neutral-100 bg-white px-3 py-3.5 last:border-b-0 sm:gap-4 sm:px-5"
       style={{ borderLeft: '4px solid #00ff87' }}
     >
       <div
@@ -56,7 +56,7 @@ function PaymentRow({ payment }: { payment: Payment }) {
 
       <div className="flex items-center gap-3">
         <span
-          className="border px-2 py-0.5 font-mono text-[9px] font-bold uppercase tracking-[0.12em]"
+          className="hidden border px-2 py-0.5 font-mono text-[9px] font-bold uppercase tracking-[0.12em] sm:inline"
           style={
             payment.status === 'pending'
               ? { background: '#fffbe6', color: '#9a7a00', borderColor: '#f0d800' }
@@ -108,7 +108,7 @@ export function WalletTab({ onDeposit }: WalletTabProps) {
         <button
           type="button"
           onClick={onDeposit}
-          className="flex shrink-0 items-center gap-2 border-4 border-black bg-[#00ff87] px-6 py-3 text-sm font-bold uppercase tracking-wider shadow-[4px_4px_0_#000000] transition-all hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[6px_6px_0_#000000]"
+          className="flex w-full shrink-0 items-center justify-center gap-2 border-4 border-black bg-[#00ff87] px-6 py-3 text-sm font-bold uppercase tracking-wider shadow-[4px_4px_0_#000000] transition-all hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[6px_6px_0_#000000] sm:w-auto"
         >
           <Plus className="h-4 w-4 stroke-[3]" />
           Top Up

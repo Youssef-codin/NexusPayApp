@@ -121,33 +121,53 @@ function ScheduledRow({ item, onCancel }: { item: EnrichedScheduled; onCancel: (
       style={{ borderLeft: `4px solid ${colors.accent}` }}
     >
       <div
-        className="flex w-[72px] shrink-0 flex-col items-center justify-center py-3.5 leading-none"
+        className="flex w-14 shrink-0 flex-col items-center justify-center py-3 leading-none sm:w-[72px] sm:py-3.5"
         style={{ borderRight: `1px solid ${colors.border}22`, background: `${colors.bg}` }}
       >
         <span className="mb-0.5 font-mono text-[9px] font-bold uppercase tracking-[0.18em] text-[#aaa]">
           {month}
         </span>
-        <span className="font-bold leading-none tracking-[-0.04em] text-[28px]">{day}</span>
+        <span className="font-bold leading-none tracking-[-0.04em] text-[24px] sm:text-[28px]">
+          {day}
+        </span>
         <span className="mt-0.5 font-mono text-[9px] tracking-[0.06em] text-[#bbb]">{time}</span>
       </div>
 
-      <div className="flex min-w-0 flex-1 flex-col gap-[5px] px-[18px] py-3.5">
+      <div className="flex min-w-0 flex-1 flex-col gap-[5px] px-3 py-3 sm:px-[18px] sm:py-3.5">
         <div className="flex items-center gap-2">
-          <span className="text-[15px] font-bold text-black">{counterparty}</span>
+          <span className="truncate text-[14px] font-bold text-black sm:text-[15px]">
+            {counterparty}
+          </span>
           <span
-            className="border px-[7px] py-0.5 font-mono text-[8px] font-bold uppercase tracking-[0.14em]"
+            className="shrink-0 border px-[7px] py-0.5 font-mono text-[8px] font-bold uppercase tracking-[0.14em]"
             style={{ background: colors.bg, borderColor: colors.border, color: colors.text }}
           >
             {badgeLabel}
           </span>
         </div>
-        <span className="font-mono text-[10px] text-[#aaa]">{subtitle}</span>
+        <div className="flex items-center gap-2">
+          <span className="font-mono text-[10px] text-[#aaa]">{subtitle}</span>
+          {/* Status pill — mobile only */}
+          <div
+            className="flex items-center gap-1 border px-1.5 py-0.5 sm:hidden"
+            style={{
+              background: statusCfg.bg,
+              borderColor: statusCfg.border,
+              color: statusCfg.text,
+            }}
+          >
+            <StatusIcon className="h-2 w-2" strokeWidth={2.5} />
+            <span className="font-mono text-[7px] font-bold uppercase tracking-[0.14em]">
+              {statusCfg.label}
+            </span>
+          </div>
+        </div>
       </div>
 
-      <div className="flex shrink-0 items-center gap-3 px-5">
-        {/* Status pill */}
+      <div className="flex shrink-0 items-center gap-2 px-3 sm:gap-3 sm:px-5">
+        {/* Status pill — desktop only */}
         <div
-          className="flex items-center gap-1 border px-2 py-0.5"
+          className="hidden items-center gap-1 border px-2 py-0.5 sm:flex"
           style={{ background: statusCfg.bg, borderColor: statusCfg.border, color: statusCfg.text }}
         >
           <StatusIcon className="h-2.5 w-2.5" strokeWidth={2.5} />
@@ -157,7 +177,7 @@ function ScheduledRow({ item, onCancel }: { item: EnrichedScheduled; onCancel: (
         </div>
 
         {t && (
-          <span className="text-[15px] font-bold text-black">
+          <span className="text-[14px] font-bold text-black sm:text-[15px]">
             {formatCurrency(t.amount_in_piastres)}
           </span>
         )}
@@ -238,7 +258,7 @@ export function ScheduledTab({ onNewSchedule }: ScheduledTabProps) {
         <button
           type="button"
           onClick={onNewSchedule}
-          className="flex shrink-0 items-center gap-2 border-4 border-black bg-[#00ff87] px-6 py-3 text-sm font-bold uppercase tracking-wider shadow-[4px_4px_0_#000000] transition-all hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[6px_6px_0_#000000]"
+          className="flex w-full shrink-0 items-center justify-center gap-2 border-4 border-black bg-[#00ff87] px-6 py-3 text-sm font-bold uppercase tracking-wider shadow-[4px_4px_0_#000000] transition-all hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[6px_6px_0_#000000] sm:w-auto"
         >
           <Plus className="h-4 w-4 stroke-[3]" />
           New Schedule

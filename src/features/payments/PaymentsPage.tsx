@@ -53,7 +53,7 @@ export function PaymentsPage({ activeTab = 'wallet' }: PaymentsPageProps) {
               type="button"
               key={id}
               onClick={() => handleTabClick(id)}
-              className={`px-6 py-2.5 text-sm font-bold uppercase tracking-widest transition-colors ${
+              className={`flex-1 justify-center px-3 py-2.5 text-sm font-bold uppercase tracking-widest transition-colors sm:flex-none sm:px-6 ${
                 active
                   ? '-mb-[4px] border-b-4 border-[#00ff87] bg-black text-[#00ff87]'
                   : 'text-neutral-400 hover:text-black'
