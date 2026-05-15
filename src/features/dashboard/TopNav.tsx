@@ -176,7 +176,7 @@ export function TopNav() {
   return (
     <header className="bg-black text-white">
       <div className="mx-auto flex h-16 max-w-[1600px] items-center justify-between gap-4 px-4 sm:px-8">
-        <Link to="/dashboard" className="flex items-center gap-2 text-white">
+        <Link to="/" className="flex items-center gap-2 text-white">
           <span className="flex h-8 w-8 items-center justify-center bg-[#00ff87] text-black">
             <NexusPayLogo type="icon" size={20} />
           </span>

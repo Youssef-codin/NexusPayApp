@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Link, Navigate, createFileRoute, useNavigate } from '@tanstack/react-router';
+import { Link, createFileRoute, useNavigate } from '@tanstack/react-router';
 import { useAuthStore } from '#/store/auth-store';
 import { useLogin } from '#/hooks/use-auth';
 
@@ -12,12 +12,6 @@ const SANS = "'Space Grotesk', sans-serif";
 const MONO = "'JetBrains Mono', monospace";
 
 function LandingPage() {
-  const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
-
-  if (isAuthenticated === true) {
-    return <Navigate to="/dashboard" replace />;
-  }
-
   return (
     <div style={{ fontFamily: SANS }}>
       <TopBanner />
@@ -91,11 +85,26 @@ function TopBanner() {
 // ─── NAV BAR ──────────────────────────────────────────────────────────────────
 
 function NavBar() {
+  const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
+  const user = useAuthStore((s) => s.user);
+  const logout = useAuthStore((s) => s.logout);
+  const navigate = useNavigate();
+
+  const initials = user?.full_name
+    ? user.full_name
+        .split(' ')
+        .map((n) => n[0])
+        .join('')
+        .slice(0, 2)
+        .toUpperCase()
+    : '?';
+
   const links = [
     { label: 'PRODUCT', href: '#features' },
     { label: 'FEATURES', href: '#features' },
     { label: 'HOW', href: '#how' },
   ];
+
   return (
     <nav
       className="landing-nav-inner"
@@ -168,43 +177,112 @@ function NavBar() {
         ))}
       </div>
 
-      <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-        <Link
-          to="/login"
-          style={{
-            color: '#aaa',
-            fontFamily: SANS,
-            fontWeight: 700,
-            fontSize: 12,
-            letterSpacing: '0.14em',
-            textDecoration: 'none',
-          }}
-        >
-          SIGN IN
-        </Link>
-        <Link
-          to="/register"
-          className="landing-hard-btn"
-          style={{
-            background: ACCENT,
-            color: '#000',
-            border: '3px solid #000',
-            padding: '11px 22px',
-            fontWeight: 700,
-            fontSize: 12,
-            letterSpacing: '0.12em',
-            boxShadow: `4px 4px 0 ${ACCENT}`,
-            fontFamily: SANS,
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: 8,
-            textDecoration: 'none',
-            transition: 'transform 0.12s, box-shadow 0.12s',
-          }}
-        >
-          SIGN UP →
-        </Link>
-      </div>
+      {isAuthenticated ? (
+        <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+          <Link
+            to="/dashboard"
+            style={{
+              color: '#aaa',
+              fontFamily: SANS,
+              fontWeight: 700,
+              fontSize: 12,
+              letterSpacing: '0.14em',
+              textDecoration: 'none',
+            }}
+          >
+            DASHBOARD
+          </Link>
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 10,
+              borderLeft: '1px solid #222',
+              paddingLeft: 14,
+            }}
+          >
+            <div
+              style={{
+                width: 32,
+                height: 32,
+                background: ACCENT,
+                color: '#000',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontWeight: 700,
+                fontSize: 12,
+                letterSpacing: '0.08em',
+                fontFamily: SANS,
+                flexShrink: 0,
+              }}
+            >
+              {initials}
+            </div>
+            <button
+              type="button"
+              onClick={() => {
+                logout();
+                navigate({ to: '/' });
+              }}
+              style={{
+                color: '#555',
+                fontFamily: SANS,
+                fontWeight: 700,
+                fontSize: 11,
+                letterSpacing: '0.14em',
+                background: 'none',
+                border: 'none',
+                cursor: 'pointer',
+                padding: 0,
+                transition: 'color 0.12s',
+              }}
+              onMouseEnter={(e) => (e.currentTarget.style.color = '#fff')}
+              onMouseLeave={(e) => (e.currentTarget.style.color = '#555')}
+            >
+              SIGN OUT
+            </button>
+          </div>
+        </div>
+      ) : (
+        <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+          <Link
+            to="/login"
+            style={{
+              color: '#aaa',
+              fontFamily: SANS,
+              fontWeight: 700,
+              fontSize: 12,
+              letterSpacing: '0.14em',
+              textDecoration: 'none',
+            }}
+          >
+            SIGN IN
+          </Link>
+          <Link
+            to="/register"
+            className="landing-hard-btn"
+            style={{
+              background: ACCENT,
+              color: '#000',
+              border: '3px solid #000',
+              padding: '11px 22px',
+              fontWeight: 700,
+              fontSize: 12,
+              letterSpacing: '0.12em',
+              boxShadow: `4px 4px 0 ${ACCENT}`,
+              fontFamily: SANS,
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: 8,
+              textDecoration: 'none',
+              transition: 'transform 0.12s, box-shadow 0.12s',
+            }}
+          >
+            SIGN UP →
+          </Link>
+        </div>
+      )}
     </nav>
   );
 }

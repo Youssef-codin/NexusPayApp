@@ -1,4 +1,4 @@
-import { useNavigate } from '@tanstack/react-router';
+import { useNavigate, Link } from '@tanstack/react-router';
 import { useForm } from '@tanstack/react-form';
 import axios from 'axios';
 import { registerSchema } from '#/lib/schemas';
@@ -46,10 +46,10 @@ export function RegisterForm() {
   return (
     <div className="p-6 sm:p-8 md:p-10">
       {/* Logo */}
-      <div className="flex items-center gap-2.5 mb-8 text-black">
+      <Link to="/" className="flex items-center gap-2.5 mb-8 no-underline">
         <NexusPayMark size={20} />
         <span className="text-sm font-bold tracking-[0.25em] text-black">NEXUS</span>
-      </div>
+      </Link>
 
       {/* Header */}
       <h1 className="text-3xl md:text-4xl font-bold text-black leading-[1.1] mb-3">
