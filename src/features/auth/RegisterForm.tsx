@@ -44,7 +44,7 @@ export function RegisterForm() {
   });
 
   return (
-    <div className="p-6 sm:p-8 md:p-10">
+    <div className="p-6 sm:p-8 md:p-10 cursor-default select-none">
       {/* Logo */}
       <Link to="/" className="flex items-center gap-2.5 mb-8 no-underline">
         <NexusPayMark size={20} />
@@ -156,7 +156,15 @@ export function RegisterForm() {
       <p className="text-center text-xs font-medium text-black">
         Already have access protocol established?{' '}
         <Button asChild variant="link">
-          <Link to="/login">AUTHENTICATE</Link>
+          <Link
+            to="/login"
+            onMouseDown={(e) => {
+              e.preventDefault();
+              navigate({ to: '/login' });
+            }}
+          >
+            AUTHENTICATE
+          </Link>
         </Button>
       </p>
     </div>

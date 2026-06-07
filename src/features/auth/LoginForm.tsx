@@ -37,7 +37,7 @@ export function LoginForm() {
   });
 
   return (
-    <div className="p-6 sm:p-8 md:p-10">
+    <div className="p-6 sm:p-8 md:p-10 cursor-default select-none">
       {/* Logo */}
       <Link to="/" className="flex items-center gap-2.5 mb-8 no-underline">
         <NexusPayMark size={20} className="w-5 h-5" />
@@ -129,7 +129,15 @@ export function LoginForm() {
       <p className="text-center text-xs font-medium text-black">
         No access protocol established?{' '}
         <Button asChild variant="link">
-          <Link to="/register">REGISTER ENTITY</Link>
+          <Link
+            to="/register"
+            onMouseDown={(e) => {
+              e.preventDefault();
+              navigate({ to: '/register' });
+            }}
+          >
+            REGISTER ENTITY
+          </Link>
         </Button>
       </p>
     </div>
