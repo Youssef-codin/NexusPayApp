@@ -5,7 +5,7 @@ import { registerSchema } from '#/lib/schemas';
 import { useRegister } from '#/hooks/use-auth';
 import { useOnlineStatus } from '#/hooks/use-online-status';
 import { Button } from '#/components/ui/button';
-import { Mail, Lock, ArrowRight, User } from 'lucide-react';
+import { Mail, Lock, ArrowRight, ArrowLeft, User } from 'lucide-react';
 import { NexusPayMark } from '#/components/NexusPayLogo';
 import { AuthFormField } from './AuthFormField';
 
@@ -46,7 +46,16 @@ export function RegisterForm() {
   return (
     <div className="p-6 sm:p-8 md:p-10 cursor-default select-none">
       {/* Logo */}
-      <Link to="/" className="flex items-center gap-2.5 mb-8 no-underline">
+      <Link
+        to="/"
+        onMouseDown={(e) => {
+          e.preventDefault();
+          navigate({ to: '/' });
+        }}
+        className="group inline-flex items-center gap-2.5 mb-8 no-underline w-fit"
+        aria-label="Back to landing page"
+      >
+        <ArrowLeft className="w-4 h-4 text-black transition-transform group-hover:-translate-x-0.5" />
         <NexusPayMark size={20} />
         <span className="text-sm font-bold tracking-[0.25em] text-black">NEXUS</span>
       </Link>

@@ -4,7 +4,7 @@ import { loginSchema } from '#/lib/schemas';
 import { useLogin } from '#/hooks/use-auth';
 import { useOnlineStatus } from '#/hooks/use-online-status';
 import { Button } from '#/components/ui/button';
-import { Mail, Lock, ArrowRight } from 'lucide-react';
+import { Mail, Lock, ArrowRight, ArrowLeft } from 'lucide-react';
 import axios from 'axios';
 import { NexusPayMark } from '#/components/NexusPayLogo';
 import { AuthFormField } from './AuthFormField';
@@ -39,7 +39,16 @@ export function LoginForm() {
   return (
     <div className="p-6 sm:p-8 md:p-10 cursor-default select-none">
       {/* Logo */}
-      <Link to="/" className="flex items-center gap-2.5 mb-8 no-underline">
+      <Link
+        to="/"
+        onMouseDown={(e) => {
+          e.preventDefault();
+          navigate({ to: '/' });
+        }}
+        className="group inline-flex items-center gap-2.5 mb-8 no-underline w-fit"
+        aria-label="Back to landing page"
+      >
+        <ArrowLeft className="w-4 h-4 text-black transition-transform group-hover:-translate-x-0.5" />
         <NexusPayMark size={20} className="w-5 h-5" />
         <span className="text-sm font-bold tracking-[0.25em] text-black">NEXUS</span>
       </Link>
