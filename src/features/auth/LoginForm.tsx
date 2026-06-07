@@ -128,8 +128,8 @@ export function LoginForm() {
 
       <p className="text-center text-xs font-medium text-black">
         No access protocol established?{' '}
-        <Button type="button" variant="link" onClick={() => navigate({ to: '/register' })}>
-          REGISTER ENTITY
+        <Button asChild variant="link">
+          <Link to="/register">REGISTER ENTITY</Link>
         </Button>
       </p>
     </div>

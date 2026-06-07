@@ -155,8 +155,8 @@ export function RegisterForm() {
 
       <p className="text-center text-xs font-medium text-black">
         Already have access protocol established?{' '}
-        <Button type="button" variant="link" onClick={() => navigate({ to: '/login' })}>
-          AUTHENTICATE
+        <Button asChild variant="link">
+          <Link to="/login">AUTHENTICATE</Link>
         </Button>
       </p>
     </div>
